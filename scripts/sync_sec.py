@@ -12,7 +12,7 @@ PAUSE=float(os.getenv("SEC_REQUEST_PAUSE","0.4")); PERIODS=int(os.getenv("SEC_PE
 HEAD={"User-Agent":UA,"Accept":"application/json, application/xml, text/xml, */*"}
 
 def now(): return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z")
-def get(url,retries=4):
+def get(url,retries=2):
     last=None
     for i in range(retries):
         try:
