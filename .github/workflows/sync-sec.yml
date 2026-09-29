@@ -15,7 +15,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: sec-13f-sync
+  group: sec-13f-sync-v2
   cancel-in-progress: true
 
 jobs:
