@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   group: sec-13f-sync
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   sync:
