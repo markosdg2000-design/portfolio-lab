@@ -111,7 +111,7 @@ def main():
             p=cached(m["id"])
             if not p: continue
         payloads.append(p)
-    if not payloads: raise SystemExit("No manager data available")
+    if not payloads:\n        save(DATA/"sync-status.json",{"generatedAt":now(),"ok":False,"errors":errs,"note":"No manager data available; published holdings were not overwritten."})\n        print("No manager data available; diagnostic status written")\n        return
     hs=[]; fs=[]
     for p in payloads:
         hs += p.get("holdings",[])
@@ -126,6 +126,6 @@ def main():
     for q in periods:
         rows=[h for h in hs if h["quarter"]==q]
         save(HIST/f"{q}.json",{"meta":{**meta,"period":q,"holdingCount":len(rows)},"holdings":rows})
-    print("Published",len(hs),"holdings from",len(payloads),"managers")
+    save(DATA/"sync-status.json",{"generatedAt":now(),"ok":True,"errors":errs,"holdingCount":len(hs),"managerCount":len(payloads)})\n    print("Published",len(hs),"holdings from",len(payloads),"managers")
 
 if __name__=="__main__": main()
