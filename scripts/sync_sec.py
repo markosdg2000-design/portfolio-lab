@@ -34,7 +34,7 @@ def quarter(d):
     y,m,_=map(int,d.split("-")); return f"{y}-Q{(m-1)//3+1}"
 
 def filings(cik):
-    s=jget(f"https://data.sec.gov/submissions/CIK{cik}.json")["filings"]["recent"]
+    s=jget(f"https://www.sec.gov/submissions/CIK{cik}.json")["filings"]["recent"]
     out=[]
     for i,f in enumerate(s.get("form",[])):
         if f not in ("13F-HR","13F-HR/A"): continue
