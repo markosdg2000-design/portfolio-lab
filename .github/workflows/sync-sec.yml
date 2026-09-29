@@ -1,0 +1,45 @@
+name: Sync SEC 13F data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 5,17 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "managers.json"
+      - "scripts/sync_sec.py"
+      - ".github/workflows/sync-sec.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sec-13f-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Fetch SEC 13F disclosures
+        env:
+          SEC_USER_AGENT: "PortfolioLab/1.0 markosdg2000-design https://github.com/markosdg2000-design/portfolio-lab"
+          SEC_REQUEST_PAUSE: "0.4"
+          SEC_PERIODS_PER_MANAGER: "4"
+        run: python scripts/sync_sec.py
+      - name: Commit refreshed public data
+        run: |
+          if git diff --quiet -- data; then
+            echo "No data changes"
+            exit 0
+          fi
+          git config user.name "portfolio-lab-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          git commit -m "data: refresh SEC 13F disclosures"
+          git push
