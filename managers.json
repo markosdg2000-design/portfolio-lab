@@ -90,6 +90,96 @@
       "source": "SEC 13F",
       "auto_sync": true,
       "official_url": "https://www.sec.gov/edgar/browse/?CIK=0001709323&owner=exclude"
+    },
+    {
+      "id": "cn-efund",
+      "name": "E Fund Management / 易方达基金",
+      "market": "CN",
+      "source": "CSRC Fund Full",
+      "auto_sync": false,
+      "official_url": "https://www.efunds.com.cn/",
+      "disclosure_url": "https://data.eastmoney.com/zlsj/"
+    },
+    {
+      "id": "cn-chinaamc",
+      "name": "China Asset Management / 华夏基金",
+      "market": "CN",
+      "source": "CSRC Fund Full",
+      "auto_sync": false,
+      "official_url": "https://www.chinaamc.com/index.shtml",
+      "disclosure_url": "https://data.eastmoney.com/zlsj/"
+    },
+    {
+      "id": "cn-gf-fund",
+      "name": "GF Fund / 广发基金",
+      "market": "CN",
+      "source": "CSRC Fund Full",
+      "auto_sync": false,
+      "official_url": "https://www.gffunds.com.cn/",
+      "disclosure_url": "https://data.eastmoney.com/zlsj/"
+    },
+    {
+      "id": "cn-china-universal",
+      "name": "China Universal / 汇添富基金",
+      "market": "CN",
+      "source": "CSRC Fund Full",
+      "auto_sync": false,
+      "official_url": "https://www.99fund.com/",
+      "disclosure_url": "https://data.eastmoney.com/zlsj/"
+    },
+    {
+      "id": "cn-zhongou",
+      "name": "Zhong Ou Fund / 中欧基金",
+      "market": "CN",
+      "source": "CSRC Fund Full",
+      "auto_sync": false,
+      "official_url": "https://www.zofund.com/",
+      "disclosure_url": "https://data.eastmoney.com/zlsj/"
+    },
+    {
+      "id": "cn-ruiyuan",
+      "name": "Ruiyuan Fund / 睿远基金",
+      "market": "CN",
+      "source": "CSRC Fund Full",
+      "auto_sync": false,
+      "official_url": "https://www.foresightfund.com/",
+      "disclosure_url": "https://data.eastmoney.com/zlsj/"
+    },
+    {
+      "id": "cn-gaoyi",
+      "name": "Gao Yi Asset / 高毅资产",
+      "market": "CN",
+      "source": "SSE/SZSE Top Holders",
+      "auto_sync": false,
+      "official_url": "https://www.gyasset.com/",
+      "disclosure_url": "https://data.eastmoney.com/zlsj/"
+    },
+    {
+      "id": "cn-greenwoods",
+      "name": "Greenwoods Asset Management / 景林资产",
+      "market": "CN",
+      "source": "SSE/SZSE Top Holders",
+      "auto_sync": false,
+      "official_url": "https://www.greenwoodsasset.com/",
+      "disclosure_url": "https://data.eastmoney.com/zlsj/"
+    },
+    {
+      "id": "hk-value-partners",
+      "name": "Value Partners Group",
+      "market": "HK",
+      "source": "HK Fund Reports",
+      "auto_sync": false,
+      "official_url": "https://www.valuepartners-group.com/en/",
+      "disclosure_url": "https://www.valuepartners-group.com/en/products-services/funds/"
+    },
+    {
+      "id": "hk-greenwoods",
+      "name": "Greenwoods Asset Management HK",
+      "market": "HK",
+      "source": "HKEX Major Shareholder",
+      "auto_sync": false,
+      "official_url": "https://www.greenwoodsasset.com/",
+      "disclosure_url": "https://di.hkex.com.hk/di/NSSrchMethod.aspx?src=MAIN&lang=EN"
     }
   ]
 }
