@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "managers": [
+    {
+      "id": "bridgewater-associates-inc",
+      "name": "Bridgewater Associates, LP",
+      "market": "US",
+      "cik": "0001350694",
+      "source": "SEC 13F",
+      "auto_sync": true,
+      "official_url": "https://www.sec.gov/edgar/browse/?CIK=0001350694&owner=exclude"
+    },
+    {
+      "id": "berkshire-hathaway-inc",
+      "name": "Berkshire Hathaway Inc",
+      "market": "US",
+      "cik": "0001067983",
+      "source": "SEC 13F",
+      "auto_sync": true,
+      "official_url": "https://www.sec.gov/edgar/browse/?CIK=0001067983&owner=exclude"
+    },
+    {
+      "id": "pershing-square-capital-management-l-p",
+      "name": "Pershing Square Capital Management, L.P.",
+      "market": "US",
+      "cik": "0001336528",
+      "source": "SEC 13F",
+      "auto_sync": true,
+      "official_url": "https://www.sec.gov/edgar/browse/?CIK=0001336528&owner=exclude"
+    },
+    {
+      "id": "duquesne-family-office-llc",
+      "name": "Duquesne Family Office LLC",
+      "market": "US",
+      "cik": "0001536411",
+      "source": "SEC 13F",
+      "auto_sync": true,
+      "official_url": "https://www.sec.gov/edgar/browse/?CIK=0001536411&owner=exclude"
+    },
+    {
+      "id": "soros-fund-management-llc",
+      "name": "Soros Fund Management LLC",
+      "market": "US",
+      "cik": "0001029160",
+      "source": "SEC 13F",
+      "auto_sync": true,
+      "official_url": "https://www.sec.gov/edgar/browse/?CIK=0001029160&owner=exclude"
+    },
+    {
+      "id": "baupost-group-llc-ma",
+      "name": "Baupost Group LLC",
+      "market": "US",
+      "cik": "0001061768",
+      "source": "SEC 13F",
+      "auto_sync": true,
+      "official_url": "https://www.sec.gov/edgar/browse/?CIK=0001061768&owner=exclude"
+    },
+    {
+      "id": "tiger-global-management-llc",
+      "name": "Tiger Global Management LLC",
+      "market": "US",
+      "cik": "0001167483",
+      "source": "SEC 13F",
+      "auto_sync": true,
+      "official_url": "https://www.sec.gov/edgar/browse/?CIK=0001167483&owner=exclude"
+    },
+    {
+      "id": "coatue-management-llc",
+      "name": "Coatue Management LLC",
+      "market": "US",
+      "cik": "0001135730",
+      "source": "SEC 13F",
+      "auto_sync": true,
+      "official_url": "https://www.sec.gov/edgar/browse/?CIK=0001135730&owner=exclude"
+    },
+    {
+      "id": "hhlr-advisors-ltd",
+      "name": "HHLR Advisors, Ltd. / Hillhouse",
+      "market": "US",
+      "cik": "0001762304",
+      "source": "SEC 13F",
+      "auto_sync": true,
+      "official_url": "https://www.sec.gov/edgar/browse/?CIK=0001762304&owner=exclude"
+    },
+    {
+      "id": "himalaya-capital-management-llc",
+      "name": "Himalaya Capital Management LLC / Li Lu",
+      "market": "US",
+      "cik": "0001709323",
+      "source": "SEC 13F",
+      "auto_sync": true,
+      "official_url": "https://www.sec.gov/edgar/browse/?CIK=0001709323&owner=exclude"
+    }
+  ]
+}
