@@ -28,7 +28,7 @@ jobs:
           python-version: "3.12"
       - name: Fetch SEC 13F disclosures
         env:
-          SEC_USER_AGENT: "PortfolioLab/1.0 markosdg2000-design https://github.com/markosdg2000-design/portfolio-lab"
+          SEC_USER_AGENT: "PortfolioLab/1.0 markosdg2000-design@users.noreply.github.com"
           SEC_REQUEST_PAUSE: "0.4"
           SEC_PERIODS_PER_MANAGER: "4"
         run: python scripts/sync_sec.py
