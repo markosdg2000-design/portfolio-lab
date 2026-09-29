@@ -129,6 +129,7 @@ def main():
     for q in periods:
         rows=[h for h in hs if h["quarter"]==q]
         save(HIST/f"{q}.json",{"meta":{**meta,"period":q,"holdingCount":len(rows)},"holdings":rows})
-    save(DATA/"sync-status.json",{"generatedAt":now(),"ok":True,"errors":errs,"holdingCount":len(hs),"managerCount":len(payloads)})\n    print("Published",len(hs),"holdings from",len(payloads),"managers")
+    save(DATA/"sync-status.json",{"generatedAt":now(),"ok":True,"errors":errs,"holdingCount":len(hs),"managerCount":len(payloads)})
+    print("Published",len(hs),"holdings from",len(payloads),"managers")
 
 if __name__=="__main__": main()
