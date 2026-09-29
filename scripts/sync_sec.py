@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 ROOT=Path(__file__).resolve().parents[1]
 CFG=ROOT/"managers.json"; DATA=ROOT/"data"; MGR=DATA/"managers"; HIST=DATA/"history"
-UA=os.getenv("SEC_USER_AGENT","PortfolioLab/1.0 markosdg2000-design https://github.com/markosdg2000-design/portfolio-lab")
+UA=os.getenv("SEC_USER_AGENT","PortfolioLab/1.0 markosdg2000-design@users.noreply.github.com")
 PAUSE=float(os.getenv("SEC_REQUEST_PAUSE","0.4")); PERIODS=int(os.getenv("SEC_PERIODS_PER_MANAGER","4"))
 HEAD={"User-Agent":UA,"Accept":"application/json, application/xml, text/xml, */*"}
 
