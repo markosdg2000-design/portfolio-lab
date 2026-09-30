@@ -1,62 +1,52 @@
 72850
-Download official SEC bulk dataset https://dcm.sec.gov/files/datastandardsinnovation/data/form-13f-data-sets/01jun2026-31aug2026_form13f.zip
-FATAL URLError(gaierror(-2, 'Name or service not known'))
-Traceback (most recent call last):
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 1344, in do_open
-    h.request(req.get_method(), req.selector, req.data, headers,
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/http/client.py", line 1386, in request
-    self._send_request(method, url, body, headers, encode_chunked)
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/http/client.py", line 1432, in _send_request
-    self.endheaders(body, encode_chunked=encode_chunked)
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/http/client.py", line 1381, in endheaders
-    self._send_output(message_body, encode_chunked=encode_chunked)
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/http/client.py", line 1141, in _send_output
-    self.send(msg)
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/http/client.py", line 1085, in send
-    self.connect()
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/http/client.py", line 1520, in connect
-    super().connect()
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/http/client.py", line 1051, in connect
-    self.sock = self._create_connection(
-                ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/socket.py", line 841, in create_connection
-    for res in getaddrinfo(host, port, 0, SOCK_STREAM):
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/socket.py", line 978, in getaddrinfo
-    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-socket.gaierror: [Errno -2] Name or service not known
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/home/runner/work/portfolio-lab/portfolio-lab/scripts/sync_sec.py", line 131, in <module>
-    try: main()
-         ^^^^^^
-  File "/home/runner/work/portfolio-lab/portfolio-lab/scripts/sync_sec.py", line 106, in main
-    h,ss=load_archive(label,url,managers); holdings+=h; filing_meta+=ss
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/portfolio-lab/portfolio-lab/scripts/sync_sec.py", line 44, in load_archive
-    raw=download(url)
-        ^^^^^^^^^^^^^
-  File "/home/runner/work/portfolio-lab/portfolio-lab/scripts/sync_sec.py", line 35, in download
-    with urlopen(Request(url,headers={"User-Agent":UA}),timeout=180) as r: return r.read()
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 215, in urlopen
-    return opener.open(url, data, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 515, in open
-    response = self._open(req, data)
-               ^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 532, in _open
-    result = self._call_chain(self.handle_open, protocol, protocol +
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 492, in _call_chain
-    result = func(*args)
-             ^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 1392, in https_open
-    return self.do_open(http.client.HTTPSConnection, req,
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/urllib/request.py", line 1347, in do_open
-    raise URLError(err)
-urllib.error.URLError: <urlopen error [Errno -2] Name or service not known>
+Sync Bridgewater Associates, LP
+  2026-Q2 997 holdings
+  2026-Q1 993 holdings
+  2025-Q4 1040 holdings
+  2025-Q3 1014 holdings
+Sync Berkshire Hathaway Inc
+  2026-Q2 29 holdings
+  2026-Q1 29 holdings
+  2025-Q4 42 holdings
+  2025-Q3 41 holdings
+Sync Pershing Square Capital Management, L.P.
+  2026-Q1 11 holdings
+  2025-Q4 11 holdings
+  2025-Q3 11 holdings
+  2025-Q2 11 holdings
+Sync Duquesne Family Office LLC
+  2026-Q2 95 holdings
+  2026-Q1 70 holdings
+  2025-Q4 62 holdings
+  2025-Q3 65 holdings
+Sync Soros Fund Management LLC
+  2026-Q2 266 holdings
+  2026-Q1 263 holdings
+  2025-Q4 244 holdings
+  2025-Q3 184 holdings
+Sync Baupost Group LLC
+  2026-Q2 23 holdings
+  2026-Q1 22 holdings
+  2025-Q4 22 holdings
+  2025-Q3 22 holdings
+Sync Tiger Global Management LLC
+  2026-Q2 46 holdings
+  2026-Q1 54 holdings
+  2025-Q4 54 holdings
+  2025-Q3 56 holdings
+Sync Coatue Management LLC
+  2026-Q2 66 holdings
+  2026-Q1 62 holdings
+  2025-Q4 52 holdings
+  2025-Q3 74 holdings
+Sync HHLR Advisors, Ltd. / Hillhouse
+  2026-Q2 35 holdings
+  2026-Q1 38 holdings
+  2025-Q4 33 holdings
+  2025-Q3 33 holdings
+Sync Himalaya Capital Management LLC / Li Lu
+  2026-Q2 8 holdings
+  2026-Q1 14 holdings
+  2025-Q4 9 holdings
+  2025-Q3 9 holdings
+PUBLISHED 6210 REAL 13F HOLDINGS FOR 10 MANAGERS
