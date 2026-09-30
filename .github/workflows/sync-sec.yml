@@ -1,4 +1,5 @@
 name: Sync SEC 13F data
+# Production sync: real public filings only
 
 on:
   workflow_dispatch:
