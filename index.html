@@ -102,7 +102,7 @@ function renderDashboard(){
   const a=agg().slice(0,12);
   $('consensus').innerHTML=a.length?'<table><thead><tr><th>Security</th><th>Issuer</th><th>Managers</th><th>Consensus</th></tr></thead><tbody>'+a.map(x=>'<tr><td class="mono"><b>'+esc(x.ticker||x.cusip)+'</b></td><td>'+esc(x.issuer)+'</td><td>'+x.holderCount+'</td><td><div class="bar"><i style="width:'+Math.min(100,x.consensus*100)+'%"></i></div><span class="small">'+pct(x.consensus)+'</span></td></tr>').join('')+'</tbody></table>':'<div class="empty">Waiting for the first SEC sync.</div>';
   const errs=data.meta.errors||[];
-  $('health').innerHTML='<div class="manager"><h4>Source</h4><p>'+esc(data.meta.source||'SEC EDGAR')+'</p></div><div class="manager"><h4>Periods retained</h4><p>'+esc((data.meta.periods||[]).join(' · ')||'—')+'</p></div><div class="manager"><h4>Sync status</h4><p>'+esc((data.meta.successfulManagers||0)+' successful / '+(data.meta.configuredManagers||10)+' configured')+'</p></div>'+(errs.length?'<div class="manager"><h4>Warnings</h4><p>'+errs.map(e=>esc(e.name+': '+e.error)).join('<br>')+'</p></div>':'');
+  $('health').innerHTML='<div class="manager"><h4>Source</h4><p>'+esc(data.meta.source||'SEC EDGAR')+'</p></div><div class="manager"><h4>Periods retained</h4><p>'+esc((data.meta.periods||[]).join(' · ')||'—')+'</p></div><div class="manager"><h4>Sync status</h4><p>'+esc((data.meta.successfulManagers??data.meta.managerCount??0)+' successful / '+(data.meta.configuredManagers||10)+' configured')+'</p></div>'+(errs.length?'<div class="manager"><h4>Warnings</h4><p>'+errs.map(e=>esc(e.name+': '+e.error)).join('<br>')+'</p></div>':'');
 }
 function renderManagers(){
  const f=$('mkt')?.value||'ALL', ms=managers.filter(m=>f==='ALL'||m.market===f);
