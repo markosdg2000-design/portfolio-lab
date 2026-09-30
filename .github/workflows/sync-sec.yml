@@ -34,7 +34,8 @@ jobs:
           SEC_PERIODS_PER_MANAGER: "4"
           PYTHONUNBUFFERED: "1"
         run: |
-          python -m py_compile scripts/sync_sec.py 2>&1 | tee data/action-log.txt
+          python -c "import urllib.request; u='https://13f.info/manager/0001350694-bridgewater-associates-lp'; print(len(urllib.request.urlopen(urllib.request.Request(u,headers={'User-Agent':'Mozilla/5.0 PortfolioLab'}),timeout=30).read()))" 2>&1 | tee data/action-log.txt
+          python -m py_compile scripts/sync_sec.py 2>&1 | tee -a data/action-log.txt
           python scripts/sync_sec.py 2>&1 | tee -a data/action-log.txt
       - name: Commit refreshed public data
         run: |
