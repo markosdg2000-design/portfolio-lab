@@ -27,16 +27,14 @@ jobs:
         with:
           python-version: "3.12"
       - name: Fetch SEC 13F disclosures
-        continue-on-error: true
         env:
           SEC_USER_AGENT: "PortfolioLab/1.0 markosdg2000-design@users.noreply.github.com"
           SEC_REQUEST_PAUSE: "0.4"
           SEC_PERIODS_PER_MANAGER: "4"
           PYTHONUNBUFFERED: "1"
         run: |
-          python -c "import urllib.request; u='https://13f.info/data/13f/000135069426000003'; b=urllib.request.urlopen(urllib.request.Request(u,headers={'User-Agent':'Mozilla/5.0 PortfolioLab'}),timeout=30).read(); open('data/debug-holdings.json','wb').write(b); print(len(b))" 2>&1 | tee data/action-log.txt
-          python -m py_compile scripts/sync_sec.py 2>&1 | tee -a data/action-log.txt
-          python scripts/sync_sec.py 2>&1 | tee -a data/action-log.txt
+          python -m py_compile scripts/sync_sec.py
+          python scripts/sync_sec.py
       - name: Commit refreshed public data
         run: |
           if [ -z "$(git status --porcelain -- data)" ]; then
