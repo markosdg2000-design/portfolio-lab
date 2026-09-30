@@ -1,0 +1,3 @@
+Download https://raw.githubusercontent.com/LuxAlgo/market-trackers-data/main/thirteenf/holdings/snapshot-2025.json.gz
+Download https://raw.githubusercontent.com/LuxAlgo/market-trackers-data/main/thirteenf/holdings/snapshot-2026.json.gz
+Mirror downloaded successfully but no configured manager holdings matched
