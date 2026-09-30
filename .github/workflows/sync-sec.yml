@@ -33,7 +33,9 @@ jobs:
           SEC_REQUEST_PAUSE: "0.4"
           SEC_PERIODS_PER_MANAGER: "4"
           PYTHONUNBUFFERED: "1"
-        run: python scripts/sync_sec.py
+        run: |
+          python -m py_compile scripts/sync_sec.py 2>&1 | tee data/action-log.txt
+          python scripts/sync_sec.py 2>&1 | tee -a data/action-log.txt
       - name: Commit refreshed public data
         run: |
           if [ -z "$(git status --porcelain -- data)" ]; then
