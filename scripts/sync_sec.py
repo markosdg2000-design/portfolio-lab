@@ -122,7 +122,7 @@ def main():
     if not payloads:
         save(DATA/"sync-status.json",{"generatedAt":now(),"ok":False,"errors":errs,"note":"No manager data available; published holdings were not overwritten."})
         print("No manager data available; diagnostic status written")
-        return
+        raise SystemExit(2)
     hs=[]; fs=[]
     for p in payloads:
         hs += p.get("holdings",[])
