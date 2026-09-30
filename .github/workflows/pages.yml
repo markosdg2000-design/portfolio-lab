@@ -2,6 +2,9 @@ name: Deploy Portfolio Lab to GitHub Pages
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Sync SEC 13F data"]
+    types: [completed]
   push:
     branches: [main]
     paths:
@@ -21,6 +24,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
