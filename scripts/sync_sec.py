@@ -122,4 +122,10 @@ def main():
     print("Published",len(keep),"real SEC-derived holdings across",meta["managerCount"],"managers",flush=True)
 
 if __name__=="__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        DATA.mkdir(exist_ok=True)
+        (DATA/"sync-status.json").write_text(json.dumps({"generatedAt":now(),"ok":False,"fatal":repr(e)},separators=(",",":")),encoding="utf-8")
+        print("FATAL",repr(e),flush=True)
+        raise
