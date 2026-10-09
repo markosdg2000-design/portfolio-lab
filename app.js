@@ -1,6 +1,6 @@
 /* Portfolio Lab v5 — static browser client; no synthetic securities or market quotes. */
 "use strict";
-const APP={managers:[],data:{meta:{},filings:[],holdings:[]},periods:[],period:"",model:null,route:"dashboard",loaded:false};
+const APP={managers:[],data:{meta:{},filings:[],holdings:[]},periods:[],period:"",model:null,route:"dashboard",loaded:false,symbols:{}};
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const usd=x=>new Intl.NumberFormat("es-ES",{style:"currency",currency:"USD",notation:"compact",maximumFractionDigits:2}).format(Number(x)||0);
@@ -12,7 +12,26 @@ const managerName=id=>APP.managers.find(m=>m.id===id)?.name||id;
 const key=h=>String(h.cusip||h.identifier||"").toUpperCase();
 const label=h=>String(h.ticker||h.cusip||"—");
 const periodRows=(p=APP.period)=>APP.data.holdings.filter(h=>h.quarter===p);
-const isEquity=h=>!h.putCall&&h.shareType!=="PRN";
+function instrumentType(h){
+ const manual=APP.symbols[key(h)]?.instrumentType;
+ if(manual==="debt")return "debt";
+ if(h.putCall)return "option";
+ if(h.shareType==="PRN"||Number(h.principal)>0||/\b(NOTE|BOND|DEBENTURE|DEBT|CONV)\b/i.test(String(h.titleOfClass||"")))return "debt";
+ if(/\bWARRANT\b|\bW EXP\b/i.test(String(h.titleOfClass||"")))return "warrant";
+ return "equity";
+}
+const isEquity=h=>instrumentType(h)==="equity";
+function typeLabel(type){return ({debt:"Deuda / nota",option:"Opción",warrant:"Warrant",equity:"Acción / participación"})[type]||"Otro"}
+function reportedQuantity(h){return instrumentType(h)==="debt"?(Number(h.principal)||Number(h.shares)||0):Number(h.shares)||0}
+function reportedUnit(h){return instrumentType(h)==="debt"?"Nominal PRN":"Acciones / unidades"}
+function referenceSymbol(x){
+ const known=APP.symbols[x.id||x.cusip||key(x)];if(known)return {ticker:known.referenceTicker,symbol:known.referenceSymbol,source:known.equitySource,relation:"issuer"};
+ const type=x.rows?.length?instrumentType(x.rows[0]):instrumentType(x);
+ const t=String(x.ticker||"").trim().toUpperCase();
+ if(type!=="equity"||!t||!/^[A-Z][A-Z0-9.\-]{0,9}$/.test(t))return null;
+ return {ticker:t,symbol:tvSymbol(t),source:"",relation:"reported"};
+}
+function assetPill(h){const kind=instrumentType(h);return pill(typeLabel(kind),kind==="debt"?"gold":kind==="option"?"blue":kind==="warrant"?"red":"green")}
 const managerRows=(id,p=APP.period)=>periodRows(p).filter(h=>h.managerId===id);
 const managerAvailable=(p=APP.period)=>new Set(periodRows(p).map(h=>h.managerId));
 function groupHoldings(rows){
@@ -32,7 +51,7 @@ function aggregate(p=APP.period,eq=false){
     .sort((a,b)=>b.holderCount-a.holderCount||b.value-a.value);
 }
 function otherPeriods(){const i=APP.periods.indexOf(APP.period);return i>0?APP.periods[i-1]:null}
-function linkCompany(x,cls="company-link"){return '<a class="'+cls+'" href="#company/'+encodeURIComponent(x.id||x.cusip||x.identifier)+'">'+esc(x.ticker||x.cusip||x.id)+'</a>'}
+function linkCompany(x,cls="company-link"){const k=x.id||x.cusip||x.identifier;const ref=referenceSymbol(x);return '<a class="'+cls+'" href="#company/'+encodeURIComponent(k)+'">'+esc(isEquity(x)&&x.ticker?x.ticker:(x.rows?.length&&x.rows.every(isEquity)&&x.ticker?x.ticker:k))+'</a>'}
 function linkManager(id){return '<a href="#manager/'+encodeURIComponent(id)+'">'+esc(managerName(id))+'</a>'}
 function pill(str,kind="neutral"){return '<span class="pill '+kind+'">'+esc(str)+'</span>'}
 function tdEmpty(text){return '<div class="empty">'+esc(text)+'</div>'}
@@ -63,11 +82,11 @@ function refreshAll(){
 }
 async function boot(){
   try{
-    const [m,d]=await Promise.all([fetch("managers.json",{cache:"no-store"}),fetch("data/latest.json",{cache:"no-store"})]);
+    const [m,d,t]=await Promise.all([fetch("managers.json",{cache:"no-store"}),fetch("data/latest.json",{cache:"no-store"}),fetch("company_symbols.json",{cache:"no-store"})]);
     if(!m.ok||!d.ok)throw new Error("La fuente ha devuelto HTTP "+m.status+" / "+d.status);
-    const mm=await m.json(),dd=await d.json();
+    const mm=await m.json(),dd=await d.json(),tt=t.ok?await t.json():{entries:{}};
     if(!Array.isArray(mm.managers)||!Array.isArray(dd.holdings))throw new Error("Estructura JSON incorrecta");
-    APP.managers=mm.managers;APP.data=dd;APP.periods=[...new Set(dd.holdings.map(h=>h.quarter).filter(Boolean))].sort();APP.period=APP.periods.at(-1)||"";
+    APP.managers=mm.managers;APP.data=dd;APP.symbols=tt.entries||{};APP.periods=[...new Set(dd.holdings.map(h=>h.quarter).filter(Boolean))].sort();APP.period=APP.periods.at(-1)||"";
     $("period").innerHTML=APP.periods.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join("")||"<option>Sin periodos</option>";
     $("period").value=APP.period;
     $("feedTag").textContent=dd.holdings.length?"● DATOS 13F PUBLICADOS":"○ SIN POSICIONES";
