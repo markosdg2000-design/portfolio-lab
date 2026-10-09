@@ -1,7 +1,7 @@
 "use strict";
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {allocateCapped,groupHoldings}=require("../app.js");
+const {allocateCapped,groupHoldings,APP,renderPortfolio,computeChanges}=require("../app.js");
 
 function assertAllocation(scores,cap){
   const a=allocateCapped(scores,cap);
@@ -37,4 +37,34 @@ for(const id of ["dashboard","institutions","manager","securities","company","ov
 for(const id of ["tvProfile","tvFinancials","tvChart"]){assert.ok(fs.readFileSync("app.js","utf8").includes(id))}
 const css=fs.readFileSync("styles.css","utf8");
 assert.ok(css.includes("@media(max-width:550px)"));
+
+const nodes=new Map();
+global.document={getElementById:id=>{
+  if(!nodes.has(id))nodes.set(id,{innerHTML:"",style:{display:""}});
+  return nodes.get(id);
+}};
+APP.period="2026-Q2";
+APP.periods=["2026-Q1","2026-Q2"];
+APP.managers=[{id:"m1",name:"Bridgewater"},{id:"m2",name:"Berkshire"}];
+APP.data={holdings:[
+ {quarter:"2026-Q1",managerId:"m1",cusip:"037833100",ticker:"AAPL",issuer:"Apple",shares:100,value:1000},
+ {quarter:"2026-Q2",managerId:"m1",cusip:"037833100",ticker:"AAPL",issuer:"Apple",shares:150,value:1500},
+ {quarter:"2026-Q2",managerId:"m1",cusip:"594918104",ticker:"MSFT",issuer:"Microsoft",shares:75,value:1000},
+ {quarter:"2026-Q1",managerId:"m2",cusip:"037833100",ticker:"AAPL",issuer:"Apple",shares:10,value:100},
+ {quarter:"2026-Q2",managerId:"m2",cusip:"037833100",ticker:"AAPL",issuer:"Apple",shares:10,value:120}
+]};
+const ch=computeChanges();
+assert.ok(ch.some(x=>x.cusip==="037833100"&&x.managerId==="m1"&&x.type==="INCREASE"&&Math.abs(x.change-.5)<1e-10),"Q/Q share percentage");
+assert.ok(ch.some(x=>x.cusip==="594918104"&&x.managerId==="m1"&&x.type==="NEW"),"new disclosure");
+APP.model={capital:10000,period:"2026-Q2",cash:.64,rows:[
+ {id:"037833100",cusip:"037833100",ticker:"AAPL",issuer:"Apple",holderCount:1,score:11,weight:.12,amount:1200},
+ {id:"594918104",cusip:"594918104",ticker:"MSFT",issuer:"Microsoft",holderCount:1,score:10,weight:.12,amount:1200},
+ {id:"000000001",cusip:"000000001",ticker:"OTHER",issuer:"Other",holderCount:1,score:9,weight:.12,amount:1200}
+]};
+renderPortfolio();
+assert.ok(nodes.get("portfolioTable").innerHTML.includes("Efectivo no asignado"),"cash line must render");
+assert.ok(nodes.get("portfolioTable").innerHTML.includes("company/037833100"),"company detail links must work");
+assert.ok(nodes.get("portfolioSummary").innerHTML.includes("64,0"),"correct residual cash share shown");
+assert.equal(nodes.get("portfolioTablePanel").style.display,"block");
+
 console.log("PASS: allocation cap, residual cash, CUSIP aggregation, all app views, widgets, responsive CSS");
