@@ -9,6 +9,9 @@ on:
     branches: [main]
     paths:
       - "index.html"
+      - "styles.css"
+      - "app.js"
+      - "tests/**"
       - "managers.json"
       - "data/**"
       - ".github/workflows/pages.yml"
@@ -32,10 +35,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: actions/configure-pages@v5
+      - name: Validate app and finance constraints
+        run: |
+          node --check app.js
+          node tests/verify.cjs
       - name: Build static site
         run: |
           mkdir -p _site
-          cp index.html managers.json _site/
+          cp index.html managers.json styles.css app.js _site/
           cp -R data _site/data
       - uses: actions/upload-pages-artifact@v4
         with:
