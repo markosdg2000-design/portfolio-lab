@@ -146,19 +146,19 @@ function renderManagerDetail(id){
   $("managerDetail").innerHTML='<div class="page-title"><div><div class="eyebrow">INSTITUTIONAL PROFILE · '+esc(m.market)+'</div><h1>'+esc(m.name)+'</h1><p>Posiciones reportadas en '+esc(APP.period)+' · CIK '+esc(m.cik||"—")+'</p></div><div class="hero-actions">'+external(m.official_url,"Registro oficial")+'</div></div>'+
     '<div class="stat-strip">'+stat("Posiciones declaradas",number(hs.length))+stat("Valor 13F declarado",usd(total))+stat("Fecha de publicación",dates.at(-1)||"—")+'</div>'+
     '<div class="panel"><div class="panel-head"><h2>Valores de este gestor</h2>'+(filing?.filingUrl?external(filing.filingUrl,"Filing SEC"):"")+'</div>'+
-    '<div class="table-wrap">'+(hs.length?panelTable(["Ticker / CUSIP","Emisor","Acciones declaradas","Valor 13F","Peso en 13F","Fuente"],hs.map(h=>
-      '<tr><td>'+linkCompany(h,"id-cell")+'</td><td>'+esc(h.issuer)+'</td><td>'+number(h.shares)+'</td><td>'+usd(h.value)+'</td><td>'+percent(total?Number(h.value||0)/total:0)+'</td><td>'+external(h.filingUrl,"SEC")+'</td></tr>'
+    '<div class="table-wrap">'+(hs.length?panelTable(["Ticker / CUSIP","Emisor","Instrumento 13F","Cantidad declarada","Valor 13F","Peso en 13F","Fuente"],hs.map(h=>
+      '<tr><td>'+linkCompany(h,"id-cell")+'</td><td>'+esc(h.issuer)+'</td><td>'+assetPill(h)+'<div class="small muted">'+esc(h.titleOfClass||"")+'</div></td><td>'+number(reportedQuantity(h))+'<div class="small muted">'+reportedUnit(h)+'</div></td><td>'+usd(h.value)+'</td><td>'+percent(total?Number(h.value||0)/total:0)+'</td><td>'+external(h.filingUrl,"SEC")+'</td></tr>'
     )):tdEmpty("Este gestor no tiene posiciones automáticas en el periodo seleccionado"))+'</div></div>'+
     '<div class="footnote">El peso es valor declarado / suma de valores 13F de este gestor en el periodo. No representa necesariamente el peso en su patrimonio total.</div>';
 }
 function renderSecurities(){
   let a=aggregate(),term=$("securitySearch").value.trim().toLowerCase(),min=Number($("securityMinManagers").value),sort=$("securitySort").value;
-  a=a.filter(x=>x.holderCount>=min&&(!term||x.issuer.toLowerCase().includes(term)||x.cusip.toLowerCase().includes(term)||x.ticker.toLowerCase().includes(term)));
+  a=a.filter(x=>x.holderCount>=min&&(!term||x.issuer.toLowerCase().includes(term)||x.cusip.toLowerCase().includes(term)||x.ticker.toLowerCase().includes(term)||(referenceSymbol(x)?.ticker||'').toLowerCase().includes(term)));
   if(sort==="value")a.sort((x,y)=>y.value-x.value);if(sort==="name")a.sort((x,y)=>x.issuer.localeCompare(y.issuer));
   const visible=a.slice(0,250);
   $("securityCount").textContent=number(a.length)+" valores coincidentes · mostrando "+number(visible.length)+" · clic en una empresa para abrir ficha";
-  $("securitiesTable").innerHTML=a.length?panelTable(["Valor","Emisor","Gestores","Consenso","Valor conjunto 13F","Análisis"],visible.map(x=>
-    '<tr><td>'+linkCompany(x,"id-cell")+'</td><td><a href="#company/'+encodeURIComponent(x.id)+'" class="company-link">'+esc(x.issuer)+'</a><div class="small muted">'+esc(x.cusip)+'</div></td>'+
+  $("securitiesTable").innerHTML=a.length?panelTable(["Valor","Emisor","Instrumento","Gestores","Consenso","Valor conjunto 13F","Análisis"],visible.map(x=>
+    '<tr><td>'+linkCompany(x,"id-cell")+'</td><td><a href="#company/'+encodeURIComponent(x.id)+'" class="company-link">'+esc(x.issuer)+'</a><div class="small muted">'+esc(x.cusip)+(referenceSymbol(x)?.relation==='issuer'?' · Acción del emisor: '+esc(referenceSymbol(x).ticker):'')+'</div></td><td>'+assetPill(x.rows[0])+'</td>'+
     '<td>'+x.holderCount+'</td><td>'+percent(x.consensus)+'</td><td>'+usd(x.value)+'</td><td><a href="#company/'+encodeURIComponent(x.id)+'">Abrir ficha ↗</a></td></tr>'
   )):tdEmpty("No hay valores con esos filtros");
 }
@@ -167,10 +167,10 @@ function computeChanges(period=APP.period,previous=otherPeriods()){
   const a=periodRows(previous),b=periodRows(period);
   const managersA=new Set(a.map(h=>h.managerId)),managersB=new Set(b.map(h=>h.managerId));
   const covered=new Set([...managersA].filter(id=>managersB.has(id)));
-  const signature=h=>h.managerId+"|"+key(h)+"|"+String(h.putCall||"")+"|"+String(h.shareType||"SH");
+  const signature=h=>h.managerId+"|"+key(h)+"|"+String(h.putCall||"")+"|"+instrumentType(h);
   const makeMap=arr=>{
     const m=new Map();
-    for(const h of arr){if(!covered.has(h.managerId)||!key(h))continue;const k=signature(h),o=m.get(k);if(o){o.shares+=Number(h.shares||0);o.value+=Number(h.value||0)}else m.set(k,{...h,shares:Number(h.shares||0),value:Number(h.value||0)})}
+    for(const h of arr){if(!covered.has(h.managerId)||!key(h))continue;const k=signature(h),o=m.get(k);if(o){o.shares+=reportedQuantity(h);o.value+=Number(h.value||0)}else m.set(k,{...h,shares:reportedQuantity(h),value:Number(h.value||0)})}
     return m;
   };
   const old=makeMap(a),cur=makeMap(b),out=[];
@@ -183,7 +183,7 @@ function computeChanges(period=APP.period,previous=otherPeriods()){
     else if(!after)type="SOLD";
     else{delta=prevShares!==0?(curShares-prevShares)/Math.abs(prevShares):null;type=curShares>prevShares?"INCREASE":curShares<prevShares?"REDUCE":"UNCHANGED"}
     if(type==="UNCHANGED")continue;
-    out.push({managerId:h.managerId,cusip:key(h),ticker:h.ticker||"",issuer:h.issuer||"",type,previous:prevShares,current:curShares,change:delta,filingDate:after?.filingDate||"",filingUrl:after?.filingUrl||before?.filingUrl||"",option:h.putCall||"",shareType:h.shareType||"SH"});
+    out.push({managerId:h.managerId,cusip:key(h),ticker:h.ticker||"",issuer:h.issuer||"",type,previous:prevShares,current:curShares,change:delta,filingDate:after?.filingDate||"",filingUrl:after?.filingUrl||before?.filingUrl||"",option:h.putCall||"",shareType:h.shareType||"SH",unit:reportedUnit(h),instrumentType:instrumentType(h)});
   }
   const severity=x=>x.type==="NEW"||x.type==="SOLD"?Number.POSITIVE_INFINITY:Math.abs(x.change??0);
   out.sort((x,y)=>severity(y)-severity(x));
@@ -195,8 +195,8 @@ function renderChanges(){
   const all=computeChanges(),a=all.filter(x=>(manager==="ALL"||x.managerId===manager)&&(kind==="ALL"||x.type===kind)&&(["NEW","SOLD"].includes(x.type)||Math.abs(x.change??0)>=th)&&(!term||x.issuer.toLowerCase().includes(term)||x.ticker.toLowerCase().includes(term)||x.cusip.toLowerCase().includes(term)));
   const displayType={NEW:"NUEVA",SOLD:"NO REPORTADA",INCREASE:"AUMENTO",REDUCE:"REDUCCIÓN"};
   $("changeCount").textContent=prev+" → "+APP.period+" · "+number(a.length)+" cambios · top "+number(Math.min(a.length,350))+" mostrados";
-  $("changesTable").innerHTML=a.length?panelTable(["Gestor","Empresa","Acciones anteriores","Acciones actuales","Variación acciones","Estado","Filing"],a.slice(0,350).map(x=>
-    '<tr><td class="small">'+linkManager(x.managerId)+'</td><td>'+linkCompany(x,"id-cell")+'<div class="small muted">'+esc(x.issuer)+'</div></td><td>'+number(x.previous)+'</td><td>'+number(x.current)+'</td>'+
+  $("changesTable").innerHTML=a.length?panelTable(["Gestor","Empresa","Instrumento","Cantidad anterior","Cantidad actual","Variación (%)","Estado","Filing"],a.slice(0,350).map(x=>
+    '<tr><td class="small">'+linkManager(x.managerId)+'</td><td>'+linkCompany(x,"id-cell")+'<div class="small muted">'+esc(x.issuer)+'</div></td><td>'+pill(typeLabel(x.instrumentType),x.instrumentType==='debt'?'gold':'blue')+'<div class="small muted">'+esc(x.unit)+'</div></td><td>'+number(x.previous)+'</td><td>'+number(x.current)+'</td>'+
     '<td><strong>'+([ "NEW","SOLD"].includes(x.type)?"—":(x.change>=0?"+":"")+percent(x.change))+'</strong></td><td>'+pill(displayType[x.type],x.type==="NEW"?"blue":x.type==="SOLD"?"red":x.type==="INCREASE"?"green":"gold")+'</td><td>'+external(x.filingUrl,"SEC")+'</td></tr>'
   )):tdEmpty("No hay movimientos para estos filtros");
 }
@@ -227,7 +227,7 @@ function allocateCapped(scores,cap){
 }
 function modelCandidates(){
   const equityOnly=$("portfolioWatchOnly").checked;
-  return aggregate(APP.period,equityOnly).filter(x=>x.ticker&&x.holderCount>=Number($("portfolioMin").value));
+  return aggregate(APP.period,equityOnly).filter(x=>x.ticker&&x.holderCount>=Number($("portfolioMin").value)&&(equityOnly?x.rows.every(isEquity):true));
 }
 function buildPortfolio(){
   const capital=Number($("portfolioCapital").value),n=Math.floor(Number($("portfolioCount").value)),cap=Number($("portfolioCap").value)/100;
@@ -259,6 +259,10 @@ function exportPortfolio(){
   const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");a.href=url;a.download="portfolio-lab-"+m.period+".csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);
 }
 const PROFILES={
+ LITE:{business:"Lumentum fabrica láseres, componentes ópticos y soluciones fotónicas para interconexión de centros de datos, telecomunicaciones, aplicaciones industriales y sensores.",segments:["Cloud & Networking","Industrial Tech"],ir:"https://investor.lumentum.com/overview/"},
+ GPN:{business:"Global Payments ofrece tecnología y software de pagos para comercios, incluida aceptación de pagos y soluciones operativas para empresas.",segments:["Merchant Solutions","Software y servicios de pagos"],ir:"https://investors.globalpayments.com/"},
+ BILL:{business:"BILL desarrolla una plataforma financiera empresarial para cuentas a pagar y cobrar, gastos, pagos y otros procesos financieros.",segments:["Cuentas por pagar y cobrar","Gastos y pagos","Servicios financieros"],ir:"https://investor.bill.com/overview/default.aspx"},
+ RIVN:{business:"Rivian fabrica vehículos eléctricos y desarrolla software, servicios y plataformas de movilidad asociados.",segments:["Automotive","Software y servicios"],ir:"https://rivian.com/investors"},
  AAPL:{business:"Apple desarrolla dispositivos electrónicos, sistemas operativos y un ecosistema de servicios digitales. Sus ingresos proceden de hardware y servicios asociados.",segments:["iPhone","Mac y iPad","Wearables y accesorios","Servicios digitales"],ir:"https://investor.apple.com/"},
  MSFT:{business:"Microsoft suministra software empresarial, infraestructura de nube, productividad, videojuegos y herramientas de inteligencia artificial.",segments:["Productivity and Business Processes","Intelligent Cloud","More Personal Computing"],ir:"https://www.microsoft.com/en-us/Investor"},
  AMZN:{business:"Amazon opera plataformas de comercio electrónico, servicios de vendedores, suscripciones y la infraestructura de nube Amazon Web Services (AWS). También comercializa publicidad.",segments:["North America","International","Amazon Web Services (AWS)"],ir:"https://ir.aboutamazon.com/"},
@@ -277,7 +281,7 @@ const PROFILES={
  BABA:{business:"Alibaba desarrolla comercio digital, servicios cloud y otras actividades tecnológicas y de consumo.",segments:["Comercio digital","Cloud Intelligence","Negocios internacionales"],ir:"https://www.alibabagroup.com/en-US/ir-home"},
  TSLA:{business:"Tesla diseña y vende vehículos eléctricos, soluciones de almacenamiento energético y servicios relacionados.",segments:["Automotive","Energy Generation and Storage","Services and Other"],ir:"https://ir.tesla.com/"}
 };
-const TV_EXCH={AAPL:"NASDAQ",MSFT:"NASDAQ",AMZN:"NASDAQ",NVDA:"NASDAQ",GOOGL:"NASDAQ",GOOG:"NASDAQ",META:"NASDAQ",TSM:"NYSE",AVGO:"NASDAQ",UBER:"NYSE",NFLX:"NASDAQ",QSR:"NYSE",BRK:"NYSE","BRK.B":"NYSE",AMD:"NASDAQ",ORCL:"NYSE",BABA:"NYSE",TSLA:"NASDAQ",V:"NYSE",MA:"NYSE",COST:"NASDAQ",WMT:"NYSE",PDD:"NASDAQ",ADBE:"NASDAQ",CRM:"NYSE",SNOW:"NYSE",COIN:"NASDAQ",PLTR:"NASDAQ",SPOT:"NYSE"};
+const TV_EXCH={LITE:"NASDAQ",GPN:"NYSE",BILL:"NYSE",RIVN:"NASDAQ",AAPL:"NASDAQ",MSFT:"NASDAQ",AMZN:"NASDAQ",NVDA:"NASDAQ",GOOGL:"NASDAQ",GOOG:"NASDAQ",META:"NASDAQ",TSM:"NYSE",AVGO:"NASDAQ",UBER:"NYSE",NFLX:"NASDAQ",QSR:"NYSE",BRK:"NYSE","BRK.B":"NYSE",AMD:"NASDAQ",ORCL:"NYSE",BABA:"NYSE",TSLA:"NASDAQ",V:"NYSE",MA:"NYSE",COST:"NASDAQ",WMT:"NYSE",PDD:"NASDAQ",ADBE:"NASDAQ",CRM:"NYSE",SNOW:"NYSE",COIN:"NASDAQ",PLTR:"NASDAQ",SPOT:"NYSE"};
 function tvSymbol(ticker){
   const t=String(ticker||"").toUpperCase().replace(/[^A-Z0-9.:-]/g,"");
   if(!t)return "";
