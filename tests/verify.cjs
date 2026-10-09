@@ -1,7 +1,7 @@
 "use strict";
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {allocateCapped,groupHoldings,APP,renderPortfolio,computeChanges}=require("../app.js");
+const {allocateCapped,groupHoldings,APP,renderPortfolio,computeChanges,instrumentType,reportedQuantity,referenceSymbol,isEquity}=require("../app.js");
 
 function assertAllocation(scores,cap){
   const a=allocateCapped(scores,cap);
@@ -66,5 +66,36 @@ assert.ok(nodes.get("portfolioTable").innerHTML.includes("Efectivo no asignado")
 assert.ok(nodes.get("portfolioTable").innerHTML.includes("company/037833100"),"company detail links must work");
 assert.ok(nodes.get("portfolioSummary").innerHTML.includes("64,0"),"correct residual cash share shown");
 assert.equal(nodes.get("portfolioTablePanel").style.display,"block");
+
+
+/* SEC 13F: Lumentum CUSIP 55024UAD1 is debt, NOT NASDAQ:LITE shares. */
+APP.symbols=JSON.parse(fs.readFileSync("company_symbols.json","utf8")).entries;
+const lumentum={cusip:"55024UAD1",ticker:"",issuer:"LUMENTUM HLDGS INC",titleOfClass:"NOTE 0.500%12/1",shares:0,principal:1250000,shareType:"PRN",putCall:"",value:88270000};
+assert.equal(instrumentType(lumentum),"debt","NOTE/PRN must be classified as debt");
+assert.equal(isEquity(lumentum),false,"bond must not enter equity portfolio");
+assert.equal(reportedQuantity(lumentum),1250000,"PRN must display principal, not 0 shares");
+const lRef=referenceSymbol({...lumentum,id:"55024UAD1",rows:[lumentum]});
+assert.equal(lRef.symbol,"NASDAQ:LITE","Lumentum issuer shares resolved");
+assert.equal(lRef.relation,"issuer","LITE is issuer equity, not the filed bond");
+for(const [cusip,sym] of [["37940XAU6","NYSE:GPN"],["090043AF7","NYSE:BILL"],["76954AAB9","NASDAQ:RIVN"]]){
+ const h={cusip,shareType:"PRN",principal:500,shares:0};
+ assert.equal(instrumentType(h),"debt");
+ assert.equal(referenceSymbol({id:cusip,cusip,rows:[h]}).symbol,sym);
+}
+const noteFallback={cusip:"999999AA1",titleOfClass:"NOTE 4.500%",shares:0,principal:0,shareType:"SH",ticker:""};
+assert.equal(instrumentType(noteFallback),"debt","fallback to NOTE class when ambiguous share type");
+assert.equal(referenceSymbol({...noteFallback,id:noteFallback.cusip,rows:[noteFallback]}),null,"do not invent a ticker for an unknown CUSIP");
+const stock={cusip:"55024U109",titleOfClass:"COM",shares:450,principal:0,shareType:"SH",ticker:"LITE"};
+assert.equal(instrumentType(stock),"equity");
+assert.equal(reportedQuantity(stock),450);
+APP.data={holdings:[
+ {quarter:"2026-Q1",managerId:"m1",...lumentum,principal:1000},
+ {quarter:"2026-Q2",managerId:"m1",...lumentum,principal:1500},
+ {quarter:"2026-Q1",managerId:"m2",...stock,shares:100},
+ {quarter:"2026-Q2",managerId:"m2",...stock,shares:100}
+]};
+const changesWithDebt=computeChanges();
+assert.ok(changesWithDebt.some(x=>x.cusip==="55024UAD1"&&x.instrumentType==="debt"&&x.previous===1000&&x.current===1500&&Math.abs(x.change-.5)<1e-10),"debt principal Q/Q");
+assert.ok(!changesWithDebt.some(x=>x.cusip==="55024U109"),"unchanged shares must not become a change");
 
 console.log("PASS: allocation cap, residual cash, CUSIP aggregation, all app views, widgets, responsive CSS");
