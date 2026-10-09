@@ -231,7 +231,7 @@ function renderPortfolio(){
   $("portfolioTablePanel").style.display="block";
   $("portfolioTable").innerHTML=panelTable(["Empresa","Gestores","Score heurístico","Peso objetivo","Importe objetivo (€)","Análisis"],m.rows.map(x=>
     '<tr><td>'+linkCompany(x,"id-cell")+'<div class="small muted">'+esc(x.issuer)+'</div></td><td>'+x.holderCount+'</td><td>'+x.score.toFixed(1)+'</td><td>'+percent(x.weight)+'</td><td>'+eur(x.amount)+'</td><td><a href="#company/'+encodeURIComponent(x.id)+'">Ver ficha ↗</a></td></tr>'
-  )+(cash>0.0001?['<tr><td><b>Efectivo no asignado</b></td><td>—</td><td>—</td><td>'+percent(cash)+'</td><td>'+eur(cash*m.capital)+'</td><td>—</td></tr>']:[]));
+  ).concat(cash>0.0001?['<tr><td><b>Efectivo no asignado</b></td><td>—</td><td>—</td><td>'+percent(cash)+'</td><td>'+eur(cash*m.capital)+'</td><td>—</td></tr>']:[]));
 }
 function exportPortfolio(){
   const m=APP.model;if(!m)return;
