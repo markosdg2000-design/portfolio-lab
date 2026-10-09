@@ -1,7 +1,7 @@
 "use strict";
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
-const {allocateCapped,groupHoldings,APP,renderPortfolio,computeChanges,instrumentType,reportedQuantity,referenceSymbol,isEquity}=require("../app.js");
+const {allocateCapped,groupHoldings,APP,renderPortfolio,computeChanges,instrumentType,reportedQuantity,referenceSymbol,isEquity,renderCompany}=require("../app.js");
 
 function assertAllocation(scores,cap){
   const a=allocateCapped(scores,cap);
@@ -97,5 +97,23 @@ APP.data={holdings:[
 const changesWithDebt=computeChanges();
 assert.ok(changesWithDebt.some(x=>x.cusip==="55024UAD1"&&x.instrumentType==="debt"&&x.previous===1000&&x.current===1500&&Math.abs(x.change-.5)<1e-10),"debt principal Q/Q");
 assert.ok(!changesWithDebt.some(x=>x.cusip==="55024U109"),"unchanged shares must not become a change");
+
+
+/* Smoke-test the actual company detail view for PRN vs issuer listed stock. */
+function fakeNode(){
+ return {innerHTML:"",style:{},childNodes:[],replaceChildren(){this.childNodes=[]},appendChild(x){this.childNodes.push(x)}};
+}
+global.document.createElement=tag=>({...fakeNode(),tagName:tag.toUpperCase()});
+for(const id of ["companyDetail","tvProfile","tvInfo","tvFinancials","tvChart"]){nodes.set(id,fakeNode())}
+const bond={...lumentum,managerId:"m1",quarter:"2026-Q2",filingUrl:"https://www.sec.gov/edgar/search/"};
+APP.data={holdings:[bond],filings:[]};
+APP.managers=[{id:"m1",name:"Soros Fund Management LLC"}];
+renderCompany("55024UAD1");
+const detail=nodes.get("companyDetail").innerHTML;
+assert.ok(detail.includes("NASDAQ:LITE"),"issuer's verifiable traded equity reference appears");
+assert.ok(detail.includes("instrumento distinto")||detail.includes("Instrumento distinto"),"clear distinct-instrument warning");
+assert.ok(detail.includes("1.250.000"),"PRN nominal visible and not zero shares");
+assert.ok(detail.includes("NO al bono")||detail.includes("no el precio de este bono"),"stock widget must not be described as bond price");
+assert.ok(detail.includes("55024UAD1"),"original filed CUSIP retained");
 
 console.log("PASS: allocation cap, residual cash, CUSIP aggregation, all app views, widgets, responsive CSS");
