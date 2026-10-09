@@ -51,3 +51,11 @@ Visitar http://localhost:8000/ . Abrir index.html con file:// puede impedir la l
 Código: index.html (páginas), styles.css (diseño), app.js (motor frontend), managers.json (universo), scripts/sync_sec.py (ingesta), tests/verify.cjs (tests) y workflows (sincronización/publicación).
 
 **Aviso:** herramienta de investigación financiera, no asesoramiento individual ni instrucciones de inversión.
+
+## Identificación de instrumentos: deuda, acciones y opciones
+
+La pantalla de gestores etiqueta el **instrumento 13F** con su CUSIP y distingue acciones/unidades, opciones, warrants y principal nominal (**PRN**). Una posición PRN puede registrar cero acciones y un principal positivo: el cero no significa que el gestor tenga cero exposición.
+
+`company_symbols.json` contiene correspondencias **verificadas manualmente** entre CUSIP de deuda y el ticker de la **acción ordinaria del emisor** (por ejemplo, Lumentum 55024UAD1 → acción NASDAQ:LITE). El gráfico/ratios TradingView de la acción **no son** cotización/ratios del bono 13F. La ficha incluye una advertencia explícita y enlaza con las fuentes de identificación. Si el ticker no está sustentado, se conserva el CUSIP y se ofrece búsqueda externa, nunca una coincidencia inventada.
+
+Los movimientos 13F se comparan según la magnitud declarada: número de acciones para acciones o **principal nominal para deuda**. Es un cambio de cantidad, no un retorno bursátil. Los tests automatizados incluyen regresiones PRN y una prueba de renderizado de la ficha de Lumentum.
