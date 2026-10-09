@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "description": "Correspondencias documentadas CUSIP de deuda → acción del emisor. El ticker NO identifica el instrumento 13F si es PRN/nota.",
+  "entries": {
+    "55024UAD1": {
+      "instrumentType": "debt",
+      "referenceSymbol": "NASDAQ:LITE",
+      "referenceTicker": "LITE",
+      "issuer": "Lumentum Holdings Inc.",
+      "instrumentSource": "https://13f.info/cusip/55024UAD1",
+      "equitySource": "https://investor.lumentum.com/overview/"
+    },
+    "37940XAU6": {
+      "instrumentType": "debt",
+      "referenceSymbol": "NYSE:GPN",
+      "referenceTicker": "GPN",
+      "issuer": "Global Payments Inc.",
+      "instrumentSource": "https://www.sec.gov/Archives/edgar/data/1618627/000089418926002037/xslFormNPORT-P_X01/primary_doc.xml",
+      "equitySource": "https://investors.globalpayments.com/"
+    },
+    "090043AF7": {
+      "instrumentType": "debt",
+      "referenceSymbol": "NYSE:BILL",
+      "referenceTicker": "BILL",
+      "issuer": "BILL Holdings Inc.",
+      "instrumentSource": "https://www.sec.gov/Archives/edgar/data/1618627/000119312526185236/xslFormNPORT-P_X01/primary_doc.xml",
+      "equitySource": "https://investor.bill.com/overview/default.aspx"
+    },
+    "76954AAB9": {
+      "instrumentType": "debt",
+      "referenceSymbol": "NASDAQ:RIVN",
+      "referenceTicker": "RIVN",
+      "issuer": "Rivian Automotive Inc.",
+      "instrumentSource": "https://www.sec.gov/Archives/edgar/data/1856405/000090514825001742/xslForm13F_X02/informationtable.xml",
+      "equitySource": "https://www.sec.gov/Archives/edgar/data/1874178/000187417826000008/rivn-20251231.htm"
+    }
+  }
+}
