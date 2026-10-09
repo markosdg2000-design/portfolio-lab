@@ -1,42 +1,53 @@
-# Portfolio Lab
+# Portfolio Lab v5
 
-Global institutional-intelligence dashboard built from public regulatory disclosures.
+**Web publicada:** https://markosdg2000-design.github.io/portfolio-lab/
 
-## What is live now
+Plataforma de investigación de posiciones institucionales, cambios trimestrales y fichas de empresas. **No inventa holdings ni precios y no predice rentabilidades.**
 
-- **United States:** automated Form 13F ingestion from **SEC EDGAR**.
-- **China A / Hong Kong:** curated real source links are present in the app; automated collectors are deliberately not enabled until each source is implemented and validated.
-- No synthetic holdings are used.
+## Pantallas
 
-## Data pipeline
+- **Dashboard:** cobertura, estado de ingesta, periodos y ranking de consenso.
+- **Gestores:** directorio US/CN/HK y fichas individuales de los diez gestores con posiciones 13F.
+- **Empresas:** explorador por emisor, ticker y CUSIP con acceso a ficha.
+- **Ficha de empresa:** líneas de negocio editoriales para empresas seleccionadas, fuentes corporativas, holdings por gestor, gráfico, perfil y fundamentales cuando los widgets externos TradingView disponen de cobertura.
+- **Cruces:** coincidencias entre dos gestores en el periodo seleccionado.
+- **Cambios 13F:** cantidad declarada anterior y actual, variación porcentual de **acciones** —no del precio—, NEW/SOLD/INCREASE/REDUCE.
+- **Cartera modelo:** selección heurística, límite máximo real por acción, efectivo residual, enlaces a fichas y exportación CSV.
+- **Metodología:** procedencia de datos, retrasos regulatorios y enlaces verificables.
 
-`GitHub Actions → SEC submissions API → EDGAR filing archive → INFORMATION TABLE XML → normalized JSON → GitHub Pages`
+## Procedencia de datos
 
-The scheduled workflow runs twice per day and keeps the latest four disclosed periods per tracked US manager. Historical period snapshots are stored under `data/history/`.
+El formulario 13F original es de la SEC. El sincronizador de producción obtiene holdings estructurados por **13f.info** porque los runners compartidos de GitHub experimentaron bloqueos con SEC; conserva los enlaces originales a cada filing SEC, accession number y CUSIP. Los valores publicados por el intermediario en miles de USD se convierten a USD.
 
-### Important 13F caveats
+La vista China/Hong Kong contiene enlaces oficiales, pero **no hay colectores automáticos** de holdings para esos mercados.
 
-Form 13F is delayed regulatory disclosure, not a live portfolio feed. The app stores filing dates separately from report dates so historical analysis can avoid look-ahead bias.
+Los gráficos, fundamental data (como PER, EBITDA cuando estén disponibles), cotizaciones y perfiles ampliados provienen de widgets **TradingView** externos. Estos datos pueden tener fechas, metodología y cobertura distintas al dataset 13F; no se incorporan al feed institucional ni se falsifican si faltan. Si el navegador bloquea scripts de terceros, los enlaces al proveedor permiten continuar la investigación.
 
-13F information tables identify securities by **CUSIP**, not by exchange ticker. Portfolio Lab therefore preserves the SEC-filed CUSIP as the authoritative security identifier. A separate CUSIP→ticker enrichment layer can be added later without changing the raw disclosure record.
+## Cómo funciona
 
-## GitHub Pages
+1. managers.json configura instituciones e identificadores CIK.
+2. La Action programada ejecuta scripts/sync_sec.py.
+3. El script escribe data/latest.json y snapshots trimestrales bajo data/history.
+4. El frontend app.js agrupa holdings por CUSIP, calcula consenso y compara cantidades entre periodos.
+5. GitHub Pages sirve index.html, styles.css, app.js y los JSON de disclosures.
 
-If the Pages deployment workflow says Pages is not enabled, open:
+**Precauciones:** los 13F son fotografías retrasadas, no una cartera en tiempo real. No incluyen toda la exposición de un gestor, ni identifican cuándo se negoció cada valor. Splits, enmiendas y diferencias de cobertura pueden afectar al análisis. El score de cartera es heurístico, no una rentabilidad esperada; sus importes en EUR no implican precios de ejecución ni tipos de cambio.
 
-**Repository → Settings → Pages → Build and deployment → Source → GitHub Actions**
+## Pruebas y ejecución local
 
-Then rerun **Deploy Portfolio Lab to GitHub Pages** from the Actions tab.
+El despliegue comprueba la sintaxis JavaScript y ejecuta tests Node:
 
-## Manual data refresh
+    node --check app.js
+    node tests/verify.cjs
 
-Open **Actions → Sync SEC 13F data → Run workflow**.
+Las pruebas cubren límites por valor, suma de pesos y efectivo residual, agrupación por CUSIP, cambio de acciones Q/Q, renderizado de cartera y presencia de pantallas.
 
-The scheduled job also runs automatically twice per day.
+Para ejecutar localmente, iniciar un servidor HTTP en la raíz:
 
-## Sources
+    python -m http.server 8000
 
-- SEC submissions API: `https://data.sec.gov/submissions/CIK##########.json`
-- SEC filing archive: `https://www.sec.gov/Archives/edgar/data/...`
+Visitar http://localhost:8000/ . Abrir index.html con file:// puede impedir la lectura fetch del JSON por política del navegador.
 
-Public institutional data is stored in the repository. Personal portfolio parameters remain in the browser's local storage.
+Código: index.html (páginas), styles.css (diseño), app.js (motor frontend), managers.json (universo), scripts/sync_sec.py (ingesta), tests/verify.cjs (tests) y workflows (sincronización/publicación).
+
+**Aviso:** herramienta de investigación financiera, no asesoramiento individual ni instrucciones de inversión.
