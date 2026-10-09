@@ -276,17 +276,20 @@ function tvEmbed(id,kind,symbol,extra={}){
   div.appendChild(script);box.appendChild(div);
 }
 function renderCompany(id){
-  const x=aggregate().find(x=>x.id===id)||groupHoldings(APP.data.holdings.filter(h=>key(h)===id)).at(-1);
+  const present=aggregate().find(x=>x.id===id),archive=APP.data.holdings.filter(h=>key(h)===id);
+  const shownPeriod=present?APP.period:[...new Set(archive.map(h=>h.quarter))].sort().at(-1);
+  const x=present||groupHoldings(archive.filter(h=>h.quarter===shownPeriod))[0];
   if(!x){$("companyDetail").innerHTML=tdEmpty("No encontramos ese CUSIP. Vuelve al explorador y selecciona una empresa del periodo.");return}
   const ticker=String(x.ticker||"").toUpperCase(),profile=PROFILES[ticker]||null,TV=tvSymbol(ticker);
   const held=x.rows||[],holderSet=x.holders||new Set(held.map(h=>h.managerId));
   const issuer=x.issuer||id,sec=held.find(h=>h.filingUrl)?.filingUrl||"https://www.sec.gov/edgar/search/";
-  const reportedManagers=managerAvailable().size,consensus=reportedManagers?holderSet.size/reportedManagers:0;
+  const reportedManagers=managerAvailable(shownPeriod).size,consensus=reportedManagers?holderSet.size/reportedManagers:0;
   const holdings=held.slice().sort((a,b)=>Number(b.value||0)-Number(a.value||0));
   const title=esc(issuer);
   const chosen=APP.model?.rows.find(r=>r.cusip===id);
   $("companyDetail").innerHTML=
-    '<div class="page-title"><div class="eyebrow">COMPANY RESEARCH · '+esc(APP.period)+'</div><div class="hero-symbol"><div class="ticker-mark">'+esc(ticker||"13F")+'</div><div><h1 class="company-name">'+title+'</h1><div class="company-sub">Ticker auxiliar: '+esc(ticker||"No disponible")+' · CUSIP: '+esc(id)+'</div></div></div><div class="hero-actions">'+external(sec,"Filing SEC")+(profile?.ir?external(profile.ir,"Relación con inversores"):"")+'</div></div>'+
+    '<div class="page-title"><div class="eyebrow">COMPANY RESEARCH · '+esc(shownPeriod)+'</div><div class="hero-symbol"><div class="ticker-mark">'+esc(ticker||"13F")+'</div><div><h1 class="company-name">'+title+'</h1><div class="company-sub">Ticker auxiliar: '+esc(ticker||"No disponible")+' · CUSIP: '+esc(id)+'</div></div></div><div class="hero-actions">'+external(sec,"Filing SEC")+(profile?.ir?external(profile.ir,"Relación con inversores"):"")+'</div></div>'+
+    (shownPeriod!==APP.period?'<div class="note" style="margin-bottom:15px">Esta empresa no figura en el periodo seleccionado ('+esc(APP.period)+'). Se muestran sus últimas posiciones históricas disponibles ('+esc(shownPeriod)+').</div>':'')+
     '<div class="stat-strip">'+stat("Gestores que la declaran",number(holderSet.size)+"/"+number(reportedManagers))+stat("Consenso de la muestra",percent(consensus))+stat("Valor declarado conjunto",usd(x.value||0))+(chosen?stat("Peso en tu cartera modelo",percent(chosen.weight)):"")+'</div>'+
     '<div class="layout-50"><div class="panel"><div class="panel-head"><div><h2>Qué es y cómo gana dinero</h2><p>Perfil de negocio, no recomendación de inversión</p></div></div>'+
       (profile?'<p class="limit-text">'+esc(profile.business)+'</p><h3 style="margin-top:22px">Principales líneas de negocio</h3><div class="profile-grid">'+profile.segments.map(seg=>'<div class="business-card"><b>'+esc(seg)+'</b><p>Segmento o actividad; consulta informes oficiales para el peso en ventas y los márgenes.</p></div>').join("")+'</div><div class="footnote">Resumen editorial cualitativo · revisa la fecha y segmentación de los informes corporativos. '+external(profile.ir,"Fuente corporativa")+'</div>':
@@ -298,9 +301,9 @@ function renderCompany(id){
     '<div class="panel" style="margin-top:16px"><div class="panel-head"><div><h2>Evolución de la acción en bolsa</h2><p>Gráfico interactivo externo con histórico, zoom e indicadores del proveedor</p></div></div>'+
       '<div class="widget-note">El gráfico procede de TradingView (mercado y cotización posiblemente diferidos). No está calculado a partir de los filings 13F.</div>'+
       (TV?'<div id="tvChart" class="widget-pane" style="height:500px"></div>':tdEmpty("No se puede asignar un gráfico fiable sin ticker"))+'</div>'+
-    '<div class="panel" style="margin-top:16px"><div class="panel-head"><div><h2>Presencia institucional en nuestra muestra</h2><p>Registros de '+esc(APP.period)+'; referencia SEC disponible por posición</p></div></div>'+
+    '<div class="panel" style="margin-top:16px"><div class="panel-head"><div><h2>Presencia institucional en nuestra muestra</h2><p>Registros de '+esc(shownPeriod)+'; referencia SEC disponible por posición</p></div></div>'+
       '<div class="table-wrap">'+panelTable(["Gestor","Acciones declaradas","Valor declarado","Peso dentro del 13F del gestor","Fuente"],holdings.map(h=>{
-         const mgr=managerRows(h.managerId),total=mgr.reduce((s,z)=>s+Number(z.value||0),0);
+         const mgr=managerRows(h.managerId,shownPeriod),total=mgr.reduce((s,z)=>s+Number(z.value||0),0);
          return '<tr><td>'+linkManager(h.managerId)+'</td><td>'+number(h.shares)+'</td><td>'+usd(h.value)+'</td><td>'+percent(total?Number(h.value||0)/total:0)+'</td><td>'+external(h.filingUrl,"SEC")+'</td></tr>'}))+'</div>'+
       '<div class="footnote">CUSIP distingue clases de acciones. Los importes son valor declarado al cierre trimestral; los cambios en acciones no reflejan necesariamente transacciones netas ajustadas por splits.</div></div>';
   if(TV){
