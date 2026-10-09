@@ -1,136 +1,84 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Portfolio Lab · Institutional Intelligence</title>
-<style>
-:root{--bg:#070b14;--p:#101826;--p2:#0b1220;--line:#233047;--txt:#e6edf7;--mut:#91a0b8;--blue:#60a5fa;--cyan:#22d3ee;--green:#34d399;--amber:#fbbf24;--red:#fb7185}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% -10%,#172554,transparent 30%),radial-gradient(circle at 100% 0,#083344,transparent 26%),var(--bg);color:var(--txt);font:14px Inter,system-ui,Segoe UI,Arial,sans-serif}
-a{color:inherit}.app{max-width:1500px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:16px}.brand h1{margin:0;font-size:28px}.brand p{color:var(--mut);margin:5px 0}.status{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.tag{padding:7px 10px;border:1px solid var(--line);background:var(--p2);border-radius:999px;font-size:12px}.live{color:#a7f3d0}.warn{color:#fde68a}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 16px}.tabs button{border:1px solid var(--line);background:var(--p2);color:var(--mut);padding:9px 13px;border-radius:11px;cursor:pointer}.tabs button.active{color:white;border-color:#3b82f6;background:#14233b}.view{display:none}.view.active{display:block}.grid{display:grid;gap:14px}.kpis{grid-template-columns:repeat(4,1fr)}.two{grid-template-columns:1.2fr .8fr}.card{border:1px solid var(--line);background:linear-gradient(180deg,#111a2aee,#0d1422ee);border-radius:17px;padding:16px;box-shadow:0 18px 45px #0006}.kpi b{font-size:26px;display:block;margin-top:7px}.mut{color:var(--mut)}h3{margin:0 0 12px;font-size:16px}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 8px;border-bottom:1px solid #223047;text-align:left;vertical-align:top}th{color:var(--mut);font-weight:600;position:sticky;top:0;background:#101826}.right{text-align:right}.scroll{overflow:auto;max-height:620px}.pill{display:inline-block;padding:3px 7px;border-radius:999px;border:1px solid var(--line);font-size:10px}.US{color:#93c5fd}.CN{color:#fca5a5}.HK{color:#fde68a}.btn{border:1px solid var(--line);background:#152033;color:white;border-radius:10px;padding:8px 10px;text-decoration:none;display:inline-block;cursor:pointer}.btn:hover{border-color:#3b82f6}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.field{display:grid;gap:5px}.field label{color:var(--mut);font-size:11px}.field input,.field select{background:#0b1220;color:white;border:1px solid var(--line);border-radius:9px;padding:9px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:10px}.toolbar .field{min-width:150px}.bar{height:7px;border-radius:99px;background:#172033;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan))}.manager{border:1px solid var(--line);background:#0b1220;border-radius:13px;padding:12px;margin-bottom:9px}.manager h4{margin:0}.manager p{margin:4px 0;color:var(--mut);font-size:11px}.note{padding:12px;border:1px solid #1e3a5f;background:#111c31;border-radius:12px;color:#bfdbfe;line-height:1.5}.empty{padding:25px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--mut)}.small{font-size:11px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-@media(max-width:900px){.kpis,.two{grid-template-columns:1fr 1fr}.top{display:block}.status{justify-content:flex-start;margin-top:10px}}@media(max-width:650px){.app{padding:12px}.kpis,.two{grid-template-columns:1fr}.brand h1{font-size:23px}}
-</style>
+<meta name="description" content="Portfolio Lab: análisis de posiciones institucionales 13F, consenso, cambios trimestrales, empresas y carteras modelo.">
+<meta name="theme-color" content="#0a1220">
+<title>Portfolio Lab | Institutional research</title>
+<link rel="stylesheet" href="styles.css?v=5">
+<script defer src="app.js?v=5"></script>
 </head>
 <body>
-<div class="app">
-  <div class="top">
-    <div class="brand"><h1>Portfolio Lab</h1><p>Global Institutional Intelligence · real public disclosures only</p></div>
-    <div class="status"><span class="tag" id="feedTag">Loading feed…</span><span class="tag" id="updateTag">—</span></div>
+<div class="app-shell">
+  <aside class="sidebar" aria-label="Navegación principal">
+    <a class="logo" href="#dashboard" aria-label="Portfolio Lab, inicio"><span class="logo-mark">P<span>·</span></span><span>Portfolio<br><b>Lab</b></span></a>
+    <div class="sidebar-label">INTELLIGENCE</div>
+    <nav id="navigation">
+      <a href="#dashboard" data-route="dashboard"><span class="nav-ico">◫</span>Dashboard</a>
+      <a href="#institutions" data-route="institutions"><span class="nav-ico">♙</span>Gestores</a>
+      <a href="#securities" data-route="securities"><span class="nav-ico">◈</span>Empresas</a>
+      <a href="#overlap" data-route="overlap"><span class="nav-ico">⊞</span>Cruces</a>
+      <a href="#changes" data-route="changes"><span class="nav-ico">↗</span>Cambios 13F</a>
+      <a href="#portfolio" data-route="portfolio"><span class="nav-ico">◴</span>Cartera modelo</a>
+      <a href="#sources" data-route="sources"><span class="nav-ico">⌁</span>Metodología</a>
+    </nav>
+    <div class="side-footer"><span class="status-dot"></span>DATOS REGULATORIOS 13F<div class="subtle" id="sideUpdate">Conectando…</div><p>Investigación financiera.<br>No es asesoramiento.</p></div>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="crumb"><span id="crumb">Overview</span><span class="slash">/</span><strong id="topTitle">Dashboard</strong></div>
+      <div class="top-controls"><div class="top-period"><label for="period">Periodo 13F</label><select id="period"><option>Cargando…</option></select></div><span class="tag" id="feedTag">Conectando feed…</span></div>
+    </header>
+    <main class="content" id="main">
+      <section class="view" id="view-dashboard">
+        <div class="page-title"><div><div class="eyebrow">INSTITUTIONAL INTELLIGENCE</div><h1>El mercado, visto desde los grandes gestores.</h1><p>Posiciones declaradas, consenso institucional y señales de cambios. Datos del último trimestre disponible, no operaciones en directo.</p></div><a class="text-link" href="#sources">Cómo se obtienen los datos ↗</a></div>
+        <div class="kpi-grid" id="dashboardKpis"></div>
+        <div class="layout-70">
+          <div class="panel"><div class="panel-head"><div><h2>Mayor consenso institucional</h2><p>Valores presentes en más gestores de la muestra</p></div><a class="quiet-link" href="#securities">Ver todas ↗</a></div><div class="table-wrap" id="dashboardConsensus"></div></div>
+          <div class="panel"><div class="panel-head"><h2>Calidad del dataset</h2></div><div id="datasetHealth"></div></div>
+        </div>
+        <div class="panel" style="margin-top:16px"><div class="panel-head"><div><h2>Cómo interpretar Portfolio Lab</h2><p>Separación entre lo observado y lo inferido</p></div></div><div class="explain-steps"><div><b>01</b><strong>Disclosure</strong><span>El 13F contiene una fotografía al cierre de trimestre.</span></div><div><b>02</b><strong>Comparación</strong><span>Contrastamos cantidad declarada por gestor y CUSIP.</span></div><div><b>03</b><strong>Análisis</strong><span>Medimos coincidencias, sin afirmar rentabilidad futura.</span></div><div><b>04</b><strong>Investigación</strong><span>Abre las fichas para valorar negocios y gráficos externos.</span></div></div></div>
+      </section>
+      <section class="view" id="view-institutions">
+        <div class="page-title"><div><div class="eyebrow">UNIVERSO DE SEGUIMIENTO</div><h1>Gestores institucionales</h1><p>Directorio real de instituciones y cobertura efectiva de las declaraciones disponibles.</p></div></div>
+        <div class="panel"><div class="toolbar"><div class="field"><label for="institutionMarket">Mercado</label><select id="institutionMarket"><option value="ALL">Todos</option><option value="US">Estados Unidos</option><option value="CN">China</option><option value="HK">Hong Kong</option></select></div><div class="field grow"><label for="institutionSearch">Gestor</label><input id="institutionSearch" placeholder="Buscar institución…"></div></div><div class="manager-grid" id="managerGrid"></div></div>
+      </section>
+      <section class="view" id="view-manager">
+        <div class="backline"><a href="#institutions">← Volver a gestores</a></div><div id="managerDetail"></div>
+      </section>
+      <section class="view" id="view-securities">
+        <div class="page-title"><div><div class="eyebrow">SECURITIES EXPLORER</div><h1>Explorador de empresas</h1><p>Accede a una ficha por cada acción con datos 13F, descripción del negocio y módulos bursátiles externos.</p></div></div>
+        <div class="panel"><div class="toolbar"><div class="field grow"><label for="securitySearch">Empresa / ticker / CUSIP</label><input id="securitySearch" placeholder="Ej.: Amazon, NVDA, 037833100"></div><div class="field"><label for="securityMinManagers">Consenso mínimo</label><select id="securityMinManagers"><option value="1">1 gestor</option><option value="2">2 gestores</option><option value="3">3 gestores</option><option value="5">5 gestores</option></select></div><div class="field"><label for="securitySort">Ordenar</label><select id="securitySort"><option value="consensus">Más gestores</option><option value="value">Mayor valor 13F</option><option value="name">Nombre A–Z</option></select></div></div><div class="list-stat" id="securityCount"></div><div class="table-wrap" id="securitiesTable"></div></div>
+      </section>
+      <section class="view" id="view-company">
+        <div class="backline"><a href="#securities">← Volver a empresas</a></div><div id="companyDetail"></div>
+      </section>
+      <section class="view" id="view-overlap">
+        <div class="page-title"><div><div class="eyebrow">CROSS-OWNERSHIP</div><h1>Cruces entre gestores</h1><p>Compara dos declarantes, descubre valores compartidos y abre sus fichas.</p></div></div>
+        <div class="panel"><div class="toolbar"><div class="field grow"><label for="overlapA">Primer gestor</label><select id="overlapA"></select></div><div class="field grow"><label for="overlapB">Segundo gestor</label><select id="overlapB"></select></div></div><div id="overlapBody"></div></div>
+      </section>
+      <section class="view" id="view-changes">
+        <div class="page-title"><div><div class="eyebrow">QUARTER-OVER-QUARTER</div><h1>Cambios en posiciones declaradas</h1><p>No son subidas o bajadas en bolsa. Son variaciones en la <strong>cantidad de acciones reportadas</strong> entre dos periodos 13F.</p></div></div>
+        <div class="formula-line"><b>Variación de acciones (%)</b> = (acciones declaradas actuales − anteriores) / acciones anteriores × 100 <span>Una variación de +50 % indica 50 % más acciones reportadas, no rentabilidad del 50 %.</span></div>
+        <div class="panel"><div class="toolbar"><div class="field"><label for="changeManager">Gestor</label><select id="changeManager"><option value="ALL">Todos los gestores</option></select></div><div class="field"><label for="changeType">Movimiento</label><select id="changeType"><option value="ALL">Todos</option><option value="NEW">Nueva</option><option value="SOLD">Ya no reportada</option><option value="INCREASE">Aumento</option><option value="REDUCE">Reducción</option></select></div><div class="field"><label for="changeThreshold">Cambio mínimo</label><select id="changeThreshold"><option value="0">Sin mínimo</option><option value="3" selected>3 %</option><option value="10">10 %</option><option value="25">25 %</option><option value="50">50 %</option></select></div><div class="field grow"><label for="changeSearch">Empresa</label><input id="changeSearch" placeholder="Buscar ticker o empresa"></div></div><div class="list-stat" id="changeCount"></div><div class="table-wrap" id="changesTable"></div><div class="footnote">NEW / SOLD significan que el CUSIP aparece o deja de aparecer en la declaración pública, no que conozcamos la fecha exacta de compra o venta. Ajustes de splits, enmiendas y cobertura pueden alterar la interpretación.</div></div>
+      </section>
+      <section class="view" id="view-portfolio">
+        <div class="page-title"><div><div class="eyebrow">RESEARCH PORTFOLIO BUILDER</div><h1>Construye una cartera explicable</h1><p>Selección heurística por coincidencia institucional y valor declarado. No es una predicción de rentabilidad ni una recomendación de inversión.</p></div></div>
+        <div class="layout-50">
+          <div class="panel"><div class="panel-head"><h2>Parámetros del modelo</h2></div><div class="form-grid"><div class="field"><label for="portfolioCapital">Capital de referencia (€)</label><input id="portfolioCapital" type="number" value="10000" min="0" step="100"></div><div class="field"><label for="portfolioCount">Número máximo de acciones</label><input id="portfolioCount" type="number" value="12" min="1" max="50"></div><div class="field"><label for="portfolioCap">Peso máximo por acción (%)</label><input id="portfolioCap" type="number" value="12" min="1" max="100" step="1"></div><div class="field"><label for="portfolioMin">Gestores mínimos</label><select id="portfolioMin"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="5">5</option></select></div></div><label class="checkline"><input type="checkbox" id="portfolioWatchOnly" checked>Excluir opciones/posiciones PRN del modelo</label><button class="primary-btn" id="buildPortfolio">Generar cartera modelo ↗</button><div class="note" style="margin-top:20px"><b>Regla de concentración:</b> ningún peso superará el límite elegido. Si no existen suficientes activos elegibles, la diferencia se mantiene como <b>efectivo no asignado</b>. Los importes en euros son objetivos de asignación, no órdenes ejecutables.</div></div>
+          <div class="panel"><div class="panel-head"><div><h2>Resultado de asignación</h2><p>Haz clic en cualquier empresa para abrir su análisis</p></div></div><div id="portfolioSummary"><div class="empty">Configura los parámetros y genera la cartera.</div></div></div>
+        </div>
+        <div class="panel" id="portfolioTablePanel" style="margin-top:16px;display:none"><div class="panel-head"><h2>Detalle de posiciones propuestas</h2><button class="ghost-btn" id="portfolioExport">Exportar CSV</button></div><div class="table-wrap" id="portfolioTable"></div></div>
+      </section>
+      <section class="view" id="view-sources">
+        <div class="page-title"><div><div class="eyebrow">AUDIT TRAIL</div><h1>Metodología y fuentes</h1><p>Qué sabemos, qué calculamos y qué sigue siendo una limitación.</p></div></div>
+        <div class="layout-50"><div class="panel"><h2>Procedencia 13F</h2><div class="source-step"><b>01</b><div><strong>Selección</strong><p>Lista de gestores y Central Index Key (CIK) desde <code>managers.json</code>.</p></div></div><div class="source-step"><b>02</b><div><strong>Transporte</strong><p>Fuente regulatoria original SEC EDGAR. El sincronizador actual obtiene tablas estructuradas mediante el espejo <a target="_blank" rel="noopener" href="https://13f.info/">13f.info</a>, conservando enlace y accession de SEC.</p></div></div><div class="source-step"><b>03</b><div><strong>Normalización</strong><p>Gestor, fecha de cierre, fecha de publicación, CUSIP, ticker auxiliar, acciones y valor USD. La unidad presentada como miles de USD por el intermediario se convierte a USD.</p></div></div><div class="source-step"><b>04</b><div><strong>Publicación</strong><p>GitHub Actions guarda archivos JSON por trimestre; GitHub Pages muestra el dataset, sin inventar posiciones ausentes.</p></div></div></div>
+        <div class="panel"><h2>Limitaciones que debes conocer</h2><div class="warning-list"><p><b>Retraso:</b> el 13F se publica después de fin de trimestre; no es una señal de trading en tiempo real.</p><p><b>Cobertura:</b> no describe la cartera económica completa ni todas las posiciones cortas o derivados.</p><p><b>Identidad:</b> se usa CUSIP para distinguir clases de acciones; un ticker puede no corresponder a la misma clase.</p><p><b>Datos financieros:</b> los módulos de empresa, gráficos y fundamentales son widgets de TradingView independientes del dataset SEC y pueden diferir en fecha o cobertura.</p><p><b>Modelización:</b> el score de cartera es una heurística; no es una probabilidad ni una rentabilidad esperada.</p><p><b>China y Hong Kong:</b> solo enlaces oficiales en el directorio. No hay holdings automatizados para esos mercados.</p></div></div></div>
+        <div class="panel" style="margin-top:16px"><h2>Estado verificable</h2><div id="sourcesMeta"></div><div class="source-links"><a target="_blank" rel="noopener" href="https://www.sec.gov/edgar/search/">SEC EDGAR ↗</a><a target="_blank" rel="noopener" href="https://13f.info/">13f.info ↗</a><a target="_blank" rel="noopener" href="https://www.tradingview.com/widget-docs/">TradingView widgets ↗</a><a target="_blank" rel="noopener" href="https://github.com/markosdg2000-design/portfolio-lab">Código en GitHub ↗</a><a target="_blank" rel="noopener" href="data/latest.json">Dataset publicado ↗</a></div></div>
+      </section>
+    </main>
+    <footer class="app-footer">Portfolio Lab · investigación financiera basada en divulgaciones regulatorias. <span>Las posiciones 13F no equivalen a recomendaciones ni operaciones actuales.</span></footer>
   </div>
-
-  <div class="tabs" id="tabs">
-    <button class="active" data-v="dashboard">Dashboard</button>
-    <button data-v="institutions">Institutions</button>
-    <button data-v="securities">Securities</button>
-    <button data-v="changes">Changes</button>
-    <button data-v="portfolio">Model Portfolio</button>
-    <button data-v="sources">Sources</button>
-  </div>
-
-  <section id="dashboard" class="view active">
-    <div class="grid kpis">
-      <div class="card kpi"><span class="mut">Tracked institutions</span><b id="kManagers">0</b><span class="small mut">US + China + HK directory</span></div>
-      <div class="card kpi"><span class="mut">Published holdings</span><b id="kHoldings">0</b><span class="small mut">SEC 13F rows</span></div>
-      <div class="card kpi"><span class="mut">Latest period</span><b id="kQuarter">—</b><span class="small mut">reporting quarter</span></div>
-      <div class="card kpi"><span class="mut">Synced US managers</span><b id="kSynced">0</b><span class="small mut">with public filing data</span></div>
-    </div>
-    <div class="grid two" style="margin-top:14px">
-      <div class="card"><h3>Highest institutional consensus · latest period</h3><div id="consensus"></div></div>
-      <div class="card"><h3>Dataset health</h3><div id="health"></div></div>
-    </div>
-  </section>
-
-  <section id="institutions" class="view">
-    <div class="toolbar"><div class="field"><label>Market</label><select id="mkt" onchange="renderManagers()"><option value="ALL">All</option><option>US</option><option>CN</option><option>HK</option></select></div></div>
-    <div class="grid two"><div class="card"><h3>Institution directory</h3><div id="managers"></div></div><div class="card"><h3>Latest filing coverage</h3><div id="coverage"></div></div></div>
-  </section>
-
-  <section id="securities" class="view">
-    <div class="card"><div class="toolbar"><div class="field"><label>Search issuer / CUSIP</label><input id="search" oninput="renderSecurities()" placeholder="Apple, 037833100…"></div><div class="field"><label>Period</label><select id="period" onchange="renderAll()"></select></div></div><div class="scroll" id="securityTable"></div></div>
-  </section>
-
-  <section id="changes" class="view">
-    <div class="card"><h3>Quarter-over-quarter disclosed changes</h3><div class="note" style="margin-bottom:12px">Changes compare filed share counts for the same manager + CUSIP. A 13F describes a past quarter-end; this is not a live trading feed.</div><div class="scroll" id="changesTable"></div></div>
-  </section>
-
-  <section id="portfolio" class="view">
-    <div class="grid two">
-      <div class="card"><h3>Explainable model</h3><div class="toolbar"><div class="field"><label>Capital</label><input id="capital" type="number" value="10000" min="100"></div><div class="field"><label>Max positions</label><input id="maxPos" type="number" value="12" min="1" max="50"></div><div class="field"><label>Max position %</label><input id="maxWeight" type="number" value="12" min="1" max="100"></div></div><button class="btn" onclick="buildPortfolio()">Build from latest consensus</button><div class="note" style="margin-top:12px">This is a rules-based model for analysis, not a recommendation. It ranks disclosed institutional overlap and caps concentration.</div></div>
-      <div class="card"><h3>Allocation</h3><div id="portfolioOut" class="empty">Build a model to see allocations.</div></div>
-    </div>
-  </section>
-
-  <section id="sources" class="view">
-    <div class="grid two"><div class="card"><h3>Data provenance</h3><div class="note"><b>United States:</b> SEC EDGAR submissions + filing archive, Form 13F information-table XML.<br><br><b>China / Hong Kong:</b> the directory contains real institutional source links, but automated holdings ingestion is intentionally not enabled until each collector is validated. No synthetic holdings are substituted.<br><br><b>Important:</b> 13F values are normalized from reported thousands of USD to USD. SEC 13F identifies securities by CUSIP, so CUSIP remains the authoritative key until a ticker-enrichment layer is added.</div></div><div class="card"><h3>Repository automation</h3><div id="automation"></div></div></div>
-  </section>
 </div>
-<script>
-let managers=[],data={meta:{},filings:[],holdings:[]}, periods=[];
-const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-const money=v=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',notation:'compact',maximumFractionDigits:1}).format(v||0);
-const pct=v=>(100*v).toFixed(1)+'%';
-function q(){return $('period').value||periods.at(-1)||''}
-function rows(period=q()){return data.holdings.filter(h=>h.quarter===period)}
-function key(h){return h.cusip||h.ticker||h.issuer}
-function display(h){return h.ticker||h.cusip||'—'}
-function setView(v){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===v));document.querySelectorAll('[data-v]').forEach(x=>x.classList.toggle('active',x.dataset.v===v))}
-document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>setView(b.dataset.v));
-
-async function load(){
-  try{
-    const [m,d]=await Promise.all([fetch('managers.json?'+Date.now(),{cache:'no-store'}),fetch('data/latest.json?'+Date.now(),{cache:'no-store'})]);
-    if(!m.ok||!d.ok) throw new Error('HTTP '+m.status+'/'+d.status);
-    managers=(await m.json()).managers||[]; data=await d.json();
-    periods=[...new Set(data.holdings.map(h=>h.quarter).filter(Boolean))].sort();
-    $('period').innerHTML=periods.length?periods.map(x=>'<option>'+esc(x)+'</option>').join(''):'<option>—</option>';
-    if(periods.length)$('period').value=periods.at(-1);
-    $('feedTag').textContent=data.holdings.length?'● LIVE SEC DATA':'○ WAITING FOR FIRST SYNC';
-    $('feedTag').className='tag '+(data.holdings.length?'live':'warn');
-    $('updateTag').textContent=data.meta.generatedAt?'Updated '+new Date(data.meta.generatedAt).toLocaleString():'Not synced yet';
-    renderAll();
-  }catch(e){$('feedTag').textContent='Feed error: '+e.message;$('feedTag').className='tag warn'}
-}
-function renderAll(){renderDashboard();renderManagers();renderSecurities();renderChanges();renderSources()}
-function latestManagerRows(mid,period=q()){return rows(period).filter(h=>h.managerId===mid)}
-function agg(period=q()){
-  const r=rows(period), usManagers=managers.filter(m=>m.market==='US'&&m.auto_sync);
-  const map=new Map();
-  for(const h of r){const k=key(h);if(!map.has(k))map.set(k,{id:k,issuer:h.issuer,cusip:h.cusip,ticker:h.ticker||'',holders:new Set(),value:0,rows:[]});const x=map.get(k);x.holders.add(h.managerId);x.value+=+h.value||0;x.rows.push(h)}
-  return [...map.values()].map(x=>({...x,holderCount:x.holders.size,consensus:usManagers.length?x.holders.size/usManagers.length:0})).sort((a,b)=>b.holderCount-a.holderCount||b.value-a.value)
-}
-function renderDashboard(){
-  $('kManagers').textContent=managers.length;$('kHoldings').textContent=(data.meta.holdingCount??data.holdings.length).toLocaleString();$('kQuarter').textContent=periods.at(-1)||'—';$('kSynced').textContent=data.meta.managerCount||0;
-  const a=agg().slice(0,12);
-  $('consensus').innerHTML=a.length?'<table><thead><tr><th>Security</th><th>Issuer</th><th>Managers</th><th>Consensus</th></tr></thead><tbody>'+a.map(x=>'<tr><td class="mono"><b>'+esc(x.ticker||x.cusip)+'</b></td><td>'+esc(x.issuer)+'</td><td>'+x.holderCount+'</td><td><div class="bar"><i style="width:'+Math.min(100,x.consensus*100)+'%"></i></div><span class="small">'+pct(x.consensus)+'</span></td></tr>').join('')+'</tbody></table>':'<div class="empty">Waiting for the first SEC sync.</div>';
-  const errs=data.meta.errors||[];
-  $('health').innerHTML='<div class="manager"><h4>Source</h4><p>'+esc(data.meta.source||'SEC EDGAR')+'</p></div><div class="manager"><h4>Periods retained</h4><p>'+esc((data.meta.periods||[]).join(' · ')||'—')+'</p></div><div class="manager"><h4>Sync status</h4><p>'+esc((data.meta.successfulManagers??data.meta.managerCount??0)+' successful / '+(data.meta.configuredManagers||10)+' configured')+'</p></div>'+(errs.length?'<div class="manager"><h4>Warnings</h4><p>'+errs.map(e=>esc(e.name+': '+e.error)).join('<br>')+'</p></div>':'');
-}
-function renderManagers(){
- const f=$('mkt')?.value||'ALL', ms=managers.filter(m=>f==='ALL'||m.market===f);
- $('managers').innerHTML=ms.map(m=>'<div class="manager"><div class="row" style="justify-content:space-between"><div><h4>'+esc(m.name)+'</h4><p><span class="pill '+m.market+'">'+m.market+'</span> '+esc(m.source||'')+(m.cik?' · CIK '+esc(m.cik):'')+'</p></div><a class="btn" target="_blank" rel="noopener" href="'+esc(m.official_url)+'">Official</a></div>'+(m.disclosure_url?'<p><a target="_blank" rel="noopener" href="'+esc(m.disclosure_url)+'">Disclosure source ↗</a></p>':'')+'</div>').join('')||'<div class="empty">No institutions.</div>';
- const us=managers.filter(m=>m.market==='US'&&m.auto_sync);
- $('coverage').innerHTML=us.map(m=>{const rr=latestManagerRows(m.id);const total=rr.reduce((s,h)=>s+(+h.value||0),0);return '<div class="manager"><h4>'+esc(m.name)+'</h4><p>'+rr.length+' holdings · '+money(total)+' disclosed value · '+esc(q())+'</p></div>'}).join('');
-}
-function renderSecurities(){
- const term=($('search')?.value||'').toLowerCase();let a=agg().filter(x=>!term||x.issuer.toLowerCase().includes(term)||(x.cusip||'').toLowerCase().includes(term)||(x.ticker||'').toLowerCase().includes(term));
- $('securityTable').innerHTML=a.length?'<table><thead><tr><th>Identifier</th><th>Issuer</th><th>Institutions</th><th>Combined disclosed value</th><th>Managers</th></tr></thead><tbody>'+a.map(x=>'<tr><td class="mono"><b>'+esc(x.ticker||x.cusip)+'</b></td><td>'+esc(x.issuer)+'</td><td>'+x.holderCount+'</td><td>'+money(x.value)+'</td><td class="small">'+[...x.holders].map(id=>esc(managers.find(m=>m.id===id)?.name||id)).join('<br>')+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">No securities for this filter.</div>';
-}
-function prevPeriod(){const i=periods.indexOf(q());return i>0?periods[i-1]:null}
-function renderChanges(){
- const p=prevPeriod();if(!p){$('changesTable').innerHTML='<div class="empty">At least two periods are needed.</div>';return}
- const prev=new Map(data.holdings.filter(h=>h.quarter===p).map(h=>[h.managerId+'|'+key(h),h]));
- const cur=new Map(rows().map(h=>[h.managerId+'|'+key(h),h]));const ks=new Set([...prev.keys(),...cur.keys()]),out=[];
- for(const k of ks){const a=prev.get(k),b=cur.get(k),m=b||a;if(!a&&b)out.push({...m,type:'NEW',chg:null});else if(a&&!b)out.push({...m,type:'SOLD',chg:-1});else{const ch=a.shares?(b.shares-a.shares)/Math.abs(a.shares):0;if(Math.abs(ch)>=.03)out.push({...m,type:ch>0?'INCREASE':'REDUCE',chg:ch})}}
- out.sort((a,b)=>Math.abs(b.chg??1)-Math.abs(a.chg??1));
- $('changesTable').innerHTML=out.length?'<table><thead><tr><th>Manager</th><th>Security</th><th>Issuer</th><th>Change</th><th>Filing date</th></tr></thead><tbody>'+out.map(x=>'<tr><td>'+esc(managers.find(m=>m.id===x.managerId)?.name||x.managerId)+'</td><td class="mono">'+esc(display(x))+'</td><td>'+esc(x.issuer)+'</td><td><span class="pill">'+x.type+(x.chg!==null&&x.chg!==undefined?' '+pct(x.chg):'')+'</span></td><td>'+esc(x.filingDate||'')+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">No ≥3% share-count changes detected.</div>';
-}
-function buildPortfolio(){
- const cap=+$('capital').value||10000,n=Math.max(1,+$('maxPos').value||12),mx=Math.max(.01,(+$('maxWeight').value||12)/100);let a=agg().filter(x=>x.holderCount>0).slice(0,n);if(!a.length){$('portfolioOut').innerHTML='<div class="empty">No live holdings yet.</div>';return}
- const scores=a.map(x=>Math.max(1,x.holderCount*10+Math.log10(Math.max(10,x.value)))),sum=scores.reduce((s,x)=>s+x,0);let w=scores.map(x=>x/sum);for(let pass=0;pass<10;pass++){let excess=0,free=0;w=w.map(x=>{if(x>mx){excess+=x-mx;return mx}free+=x;return x});if(excess<1e-9)break;if(free<=0)break;w=w.map(x=>x<mx?x+excess*(x/free):x)}const norm=w.reduce((s,x)=>s+x,0);w=w.map(x=>x/norm);
- $('portfolioOut').innerHTML='<table><thead><tr><th>Security</th><th>Institutions</th><th>Weight</th><th class="right">Amount</th></tr></thead><tbody>'+a.map((x,i)=>'<tr><td><b class="mono">'+esc(x.ticker||x.cusip)+'</b><div class="small mut">'+esc(x.issuer)+'</div></td><td>'+x.holderCount+'</td><td>'+pct(w[i])+'</td><td class="right">€'+(cap*w[i]).toFixed(0)+'</td></tr>').join('')+'</tbody></table>';
-}
-function renderSources(){
- $('automation').innerHTML='<div class="manager"><h4>Automatic SEC refresh</h4><p>GitHub Actions · twice daily (05:17 and 17:17 UTC) + manual workflow dispatch.</p></div><div class="manager"><h4>Published feed</h4><p><a target="_blank" href="data/latest.json">data/latest.json ↗</a></p></div><div class="manager"><h4>Repository</h4><p><a target="_blank" href="https://github.com/markosdg2000-design/portfolio-lab">markosdg2000-design/portfolio-lab ↗</a></p></div>';
-}
-load();
-</script>
-</body></html>
+</body>
+</html>
