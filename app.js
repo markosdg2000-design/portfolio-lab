@@ -32,7 +32,7 @@ function aggregate(p=APP.period,eq=false){
     .sort((a,b)=>b.holderCount-a.holderCount||b.value-a.value);
 }
 function otherPeriods(){const i=APP.periods.indexOf(APP.period);return i>0?APP.periods[i-1]:null}
-function linkCompany(x,cls="company-link"){return '<a class="'+cls+'" href="#company/'+encodeURIComponent(x.id)+'">'+esc(x.ticker||x.cusip||x.id)+'</a>'}
+function linkCompany(x,cls="company-link"){return '<a class="'+cls+'" href="#company/'+encodeURIComponent(x.id||x.cusip||x.identifier)+'">'+esc(x.ticker||x.cusip||x.id)+'</a>'}
 function linkManager(id){return '<a href="#manager/'+encodeURIComponent(id)+'">'+esc(managerName(id))+'</a>'}
 function pill(str,kind="neutral"){return '<span class="pill '+kind+'">'+esc(str)+'</span>'}
 function tdEmpty(text){return '<div class="empty">'+esc(text)+'</div>'}
@@ -258,7 +258,7 @@ const PROFILES={
  BABA:{business:"Alibaba desarrolla comercio digital, servicios cloud y otras actividades tecnológicas y de consumo.",segments:["Comercio digital","Cloud Intelligence","Negocios internacionales"],ir:"https://www.alibabagroup.com/en-US/ir-home"},
  TSLA:{business:"Tesla diseña y vende vehículos eléctricos, soluciones de almacenamiento energético y servicios relacionados.",segments:["Automotive","Energy Generation and Storage","Services and Other"],ir:"https://ir.tesla.com/"}
 };
-const TV_EXCH={AAPL:"NASDAQ",MSFT:"NASDAQ",AMZN:"NASDAQ",NVDA:"NASDAQ",GOOGL:"NASDAQ",GOOG:"NASDAQ",META:"NASDAQ",TSM:"NYSE",AVGO:"NASDAQ",UBER:"NYSE",NFLX:"NASDAQ",QSR:"NYSE",BRK:"NYSE",AMD:"NASDAQ",ORCL:"NYSE",BABA:"NYSE",TSLA:"NASDAQ",V:"NYSE",MA:"NYSE",COST:"NASDAQ",WMT:"NYSE",PDD:"NASDAQ",ADBE:"NASDAQ",CRM:"NYSE",SNOW:"NYSE",COIN:"NASDAQ",PLTR:"NASDAQ",SPOT:"NYSE"};
+const TV_EXCH={AAPL:"NASDAQ",MSFT:"NASDAQ",AMZN:"NASDAQ",NVDA:"NASDAQ",GOOGL:"NASDAQ",GOOG:"NASDAQ",META:"NASDAQ",TSM:"NYSE",AVGO:"NASDAQ",UBER:"NYSE",NFLX:"NASDAQ",QSR:"NYSE",BRK:"NYSE","BRK.B":"NYSE",AMD:"NASDAQ",ORCL:"NYSE",BABA:"NYSE",TSLA:"NASDAQ",V:"NYSE",MA:"NYSE",COST:"NASDAQ",WMT:"NYSE",PDD:"NASDAQ",ADBE:"NASDAQ",CRM:"NYSE",SNOW:"NYSE",COIN:"NASDAQ",PLTR:"NASDAQ",SPOT:"NYSE"};
 function tvSymbol(ticker){
   const t=String(ticker||"").toUpperCase().replace(/[^A-Z0-9.:-]/g,"");
   if(!t)return "";
