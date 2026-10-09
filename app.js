@@ -320,5 +320,5 @@ function renderSources(){
     '<div class="meta-row"><span>Errores registrados</span><strong>'+number(meta.errors?.length||0)+'</strong></div>'+
     '</div><div class="footnote">'+esc(meta.note||"Los resultados son divulgaciones históricas sujetas a retrasos y cobertura regulatoria.")+'</div>';
 }
-if(typeof module!=="undefined"&&module.exports)module.exports={allocateCapped,groupHoldings};
+if(typeof module!=="undefined"&&module.exports)module.exports={allocateCapped,groupHoldings,panelTable,computeChanges,APP,renderPortfolio};
 if(typeof document!=="undefined")document.addEventListener("DOMContentLoaded",boot);
